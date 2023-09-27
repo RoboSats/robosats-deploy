@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-beat
+  labels:
+    app: celery-beat
+spec:
+  selector:
+    matchLabels:
+      app: celery-beat
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: celery-beat
+    spec:
+      containers:
+        - name: celery-beat
+          image: recksato/robosats:latest
+          # imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "500Mi"
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+          envFrom:
+            - configMapRef:
+                name: robosats-configmap
+            - secretRef:
+                name: robosats-secret
+            - secretRef:
+                name: postgres-secret # Using the Secret postgres-secret
+          command: ["celery", "-A", "robosats", "beat", "--loglevel=INFO", "--scheduler","django_celery_beat.schedulers:DatabaseScheduler"]

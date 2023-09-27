@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daphne
+  labels:
+    app: daphne
+spec:
+  selector:
+    matchLabels:
+      app: daphne
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: daphne
+    spec:
+      containers:
+        - name: daphne
+          image: recksato/robosats:534e4c0
+          # imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "500Mi"
+            requests:
+              cpu: "20m"
+              memory: "50Mi"
+          envFrom:
+            - configMapRef:
+                name: robosats-configmap
+            - secretRef:
+                name: robosats-secret
+            - secretRef:
+                name: postgres-secret # Using the Secret postgres-secret
+          command: ["daphne", "-b", "0.0.0.0", "-p", "9000", "robosats.asgi:application"]
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: static-data
+              mountPath: /usr/src/static
+            - name: lnd-data
+              mountPath: /lnd
+      volumes:
+        - name: static-data
+          persistentVolumeClaim:
+            claimName: static-pvc
+        - name: lnd-data
+          persistentVolumeClaim:
+            claimName: lnd-pvc          

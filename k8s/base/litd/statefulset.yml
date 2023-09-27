@@ -1,0 +1,58 @@
+# postgres StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: litd
+  labels:
+    app: litd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: litd
+  serviceName: litd
+  template:
+    metadata:
+      labels:
+        app: litd
+    spec:
+      containers:
+        - name: litd
+          image: lightninglabs/lightning-terminal:v0.10.5-alpha
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "500Mi"
+            requests:
+              cpu: "10m"
+              memory: "100Mi"
+          args: [
+            --uipassword=$(uipassword),
+            --network=$(network),
+            # --restcors=$(restcors),
+            --remote.lnd.rpcserver=$(remote.lnd.rpcserver),
+            --remote.lnd.macaroonpath=$(remote.lnd.macaroonpath),
+            --remote.lnd.tlscertpath=$(remote.lnd.tlscertpath),
+            --httpslisten=$(httpslisten),
+            --loop.server.proxy=$(loop.server.proxy),
+            --loop.loopoutmaxparts=$(loop.loopoutmaxparts),
+            --loop.maxlsatfee=$(loop.maxlsatfee)
+           ] 
+          envFrom:
+            - configMapRef:
+                name: litd-configmap
+            - secretRef:
+                name: litd-secret
+          volumeMounts:
+            - name: lnd-data
+              mountPath: /root/.lnd/
+            - name: litd-data
+              mountPath: /root/.litd/
+      volumes:
+        - name: lnd-data
+          persistentVolumeClaim:
+            claimName: lnd-pvc
+        - name: litd-data
+          persistentVolumeClaim:
+            claimName: litd-pvc

@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  cln:
+    build: ./cln
+    restart: always
+    network_mode: service:tor
+    container_name: cln${SUFFIX}
+    depends_on:
+      - tor
+      - bitcoind
+    volumes:
+      - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}:ro
+      - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}:ro
+      - ${CLN_DATA:?}:/root/.lightning
+      - ${BITCOIN_DATA}:/root/.bitcoin
+    command: lightningd
+
+# Patch common services
+  robosats:
+    volumes:
+      - ${CLN_DATA}:/cln
+  clean-orders:
+    volumes:
+      - ${CLN_DATA}:/cln
+  follow-invoices:
+    volumes:
+      - ${CLN_DATA}:/cln
+  celery:
+    volumes:
+      - ${CLN_DATA}:/cln
+  # backup:
+  #   volumes:
+  #     - ${CLN_DATA}:/running/cln:ro

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thub
+  labels:
+    app: thub
+spec:
+  selector:
+    matchLabels:
+      app: thub
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: thub
+    spec:
+      containers:
+        - name: thub
+          image: apotdevin/thunderhub:v0.13.11
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: thub-configmap
+          ports:
+          - containerPort: 3010
+          resources:
+            limits:
+              cpu: "1"
+              memory: "500Mi"
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+          volumeMounts:
+            - name: thub-conf
+              mountPath: /config/accounts.yml
+              subPath: accounts.yml
+            - name: lnd-data
+              mountPath: /lnd     
+      volumes:
+        - name: thub-conf
+          configMap:
+            name: thub-configmap
+        - name: lnd-data
+          persistentVolumeClaim:
+            claimName: lnd-pvc

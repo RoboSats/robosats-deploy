@@ -1,0 +1,5 @@
+# RoboSats Coordinator Deployment Orchestrations
+
+This repository holds two full blown RoboSats coordinator deployment orchestration with decent defaults. There is two flavours: docker-compose (`/compose`) and kubernetes (`/k8s`). The docker-compose orchestration is better tested and better suited for new coordinators. The kubernetes orchestration is still work in progress and better suited for high availability and large scale coordinators: any help to finish the k8s orchestration is appreciated and will be rewarded with Sats.
+
+The tags/releases versioning for this repository match `robosats/robosats` (semver) with a subpatch sequence. For example, for `v0.6.0-alpha` the first orchestration release will be `v0.6.0~1`, therefore, allowing bug fixing and faster iteration of the orchestration codebase if needed.

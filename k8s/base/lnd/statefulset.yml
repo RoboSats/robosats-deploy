@@ -1,0 +1,67 @@
+# postgres StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lnd
+  labels:
+    app: lnd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lnd
+  serviceName: lnd
+  template:
+    metadata:
+      labels:
+        app: lnd
+    spec:
+      containers:
+        - name: lnd
+          image: lightninglabs/lnd:v0.16.4-beta
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "4000Mi"
+            requests:
+              cpu: "10m"
+              memory: "100Mi"
+          ports:
+            - containerPort: 10009
+          args: [ # lnd.conf arguments from lnd-configmap
+            # --lnddir=/root/.lnd/
+            # --configfile=/root/.lnd/lnd.conf,
+            --bitcoind.rpcuser=$(rpcuser),
+            --bitcoind.rpcpass=$(rpcpassword),
+            --tor.password=$(torcontrolpass),
+           ] 
+          envFrom:
+            - configMapRef:
+                name: lnd-configmap
+            - secretRef:
+                name: bitcoind-secret
+            - secretRef:
+                name: tor-secret
+          volumeMounts:
+            - name: lnd-data
+              mountPath: /root/.lnd/
+            - name: lnd-conf
+              mountPath: /root/.lnd/lnd.conf
+              subPath: lnd.conf
+            - name: lnd-autounlock
+              mountPath: /tmp/
+              readOnly: true
+      volumes:
+        - name: lnd-data
+          persistentVolumeClaim:
+            claimName: lnd-pvc
+        - name: lnd-conf
+          configMap:
+            name: lnd-configmap
+        - name: lnd-autounlock
+          secret:
+            secretName: lnd-secret
+            items:
+            - key: lndpass
+              path: autounlockpass

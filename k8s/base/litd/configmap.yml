@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litd-configmap
+data:
+  network: 'testnet'
+  restcors: '*' # Add an ip:port/hostname to allow cross origin access from. To allow all origins, set as "*".
+  remote.lnd.rpcserver: 'lnd:10009'
+  remote.lnd.macaroonpath: '/root/.lnd/data/chain/bitcoin/${network}/admin.macaroon' # For mainnnet /lnd/data/chain/bitcoin/mainnet/admin.macaroon
+  remote.lnd.tlscertpath: '/root/.lnd/tls.cert'
+  httpslisten: '0.0.0.0:8443'
+  loop.server.proxy: 'tor:9050'
+  pool.proxy: 'tor:9050'
+  loop.loopoutmaxparts: '25'
+  loop.maxlsatfee: '1'

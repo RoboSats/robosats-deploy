@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thub-configmap
+data:
+  accounts.yml: |
+    defaultNetwork: "testnet"
+    accounts:
+      - name: "RoboSats (Robodevz)"
+        serverUrl: "lnd:10009"
+        lndDir: "/lnd/"
+        password: "examplepassword"
+  TOR_PROXY_SERVER: 'socks://tor:9050'
+  THEME: 'dark'
+  CURRENCY: 'sat'
+  FETCH_PRICES: 'false'
+  FETCH_FEES: 'false'
+  DISABLE_LINKS: 'true'
+  DISABLE_LNMARKETS: 'true'
+  NO_VERSION_CHECK: 'true'
+  ACCOUNT_CONFIG_PATH: '/config/accounts.yml'
+  # COOKIE_PATH: '/lnd/.cookie'
+  # SSO_SERVER_URL: 'lnd:10009'
+  # SSO_CERT_PATH: '/lnd/tls.cert'
+  # SSO_MACAROON_PATH: '/lnd/data/chain/bitcoin/testnet'
+  # DANGEROUS_NO_SSO_AUTH: 'false'

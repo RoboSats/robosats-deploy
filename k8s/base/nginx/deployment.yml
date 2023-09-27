@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable
+          ports:
+          - containerPort: 80
+          resources:
+            limits:
+              cpu: "1"
+              memory: "100Mi"
+            requests:
+              cpu: "1m"
+              memory: "5Mi"
+          volumeMounts:
+            - name: static-data
+              mountPath: /usr/src/static
+              readOnly: true
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/local.conf
+              subPath: local.conf
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: static-data
+          persistentVolumeClaim:
+            claimName: static-pvc
+        - name: nginx-conf
+          configMap:
+            name: nginx-configmap

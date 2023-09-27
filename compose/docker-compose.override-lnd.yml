@@ -1,0 +1,106 @@
+version: '3.9'
+services:
+  lnd:
+    build: ./lnd/${LND_VERSION}
+    restart: always
+    network_mode: service:tor
+    container_name: lnd${SUFFIX}
+    depends_on:
+      - tor
+      - bitcoind
+    volumes:
+      - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}:ro
+      - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}:ro
+      - ${LND_DATA:?}:${GUEST_LND:?}
+      - ${LND_DATA:?}:/root/.lnd
+    command: lnd
+    environment:
+      LOCAL_USER_ID: ${LOCAL_USER_ID}
+      LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
+      SUFFIX: ${SUFFIX}
+      LND_RPC_PORT: ${GUEST_LND_RPC_PORT:?}
+      LND_REST_PORT: ${GUEST_LND_REST_PORT:?}
+      AUTO_UNLOCK_PWD: ${AUTO_UNLOCK_PWD}
+
+  thub:
+    build: ./thunderhub
+    restart: always
+    network_mode: service:tor
+    container_name: thub${SUFFIX}
+    env_file:
+      ${THUB_ENVS_FILE}
+    depends_on:
+      - tor
+      - lnd
+    volumes:
+      - ${LND_DATA:?}:/lnd/:ro
+
+  lit:
+    image: lightninglabs/lightning-terminal:v0.10.5-alpha
+    restart: always
+    network_mode: service:tor
+    container_name: lit${SUFFIX}
+    depends_on:
+      - tor
+      - lnd
+    command: litd --uipassword ${LIT_PASSWORD} --network=${NETWORK} --lnd-mode=remote --remote.lnd.rpcserver=127.0.0.1:${GUEST_LND_RPC_PORT:?} --remote.lnd.macaroonpath=/lnd/data/chain/bitcoin/${NETWORK}/admin.macaroon  --remote.lnd.tlscertpath=/lnd/tls.cert --httpslisten=0.0.0.0:8443 --loop.server.proxy=127.0.0.1:9050 --loop.loopoutmaxparts=25 --loop.maxlsatfee=1
+    volumes:
+      - ${LND_DATA:?}:/lnd/:ro
+      - ${LIT_DATA:?}:/root/
+
+# Patch common services
+  tor:
+    ports:
+      - ${THUB_LOCAL_PORT}:3000
+      - ${LIT_LOCAL_PORT}:8443
+  robosats:
+    volumes:
+      - ${LND_DATA}:/lnd
+  clean-orders:
+    volumes:
+      - ${LND_DATA}:/lnd
+  follow-invoices:
+    volumes:
+      - ${LND_DATA}:/lnd
+  celery:
+    volumes:
+      - ${LND_DATA}:/lnd
+  # backup:
+  #   volumes:
+  #     - ${LND_DATA}:/running/lnd:ro
+  #     - ${LIT_DATA}:/running/lit:ro
+
+# Other LND services you might want to enable
+
+#  bos:
+#    image: alexbosworth/balanceofsatoshis:latest
+#    restart: always
+#    container_name: bos${SUFFIX}
+#    depends_on:
+#      - tor
+#      - lnd
+#    network_mode: service:tor
+#    volumes:
+#      - ${LND_DATA:?}:/home/node/.lnd:ro
+
+# LND healthcheck. 
+# These are hit or miss. Not recommended as you might kill a healthy container or enter a restart loop.
+
+#    healthcheck:
+#      test: ['CMD', 'lncli', '--network=${NETWORK}', 'getinfo']
+#      interval: 30s
+#      retries: 3
+#      start_period: 30m
+#      timeout: 10s
+#    labels:
+#      - "deunhealth.restart.on.unhealthy=true"
+
+# docker-compose can't restore an unhealthy container (e.g., restart it). Hence, if you enable the LND
+# healthcheck you might want to uncomment the `deunhealth` container as well.
+
+#  deunhealth:
+#    image: qmcgaw/deunhealth:v0.3.0
+#    container_name: deunhealth${SUFFIX}
+#    restart: always
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock

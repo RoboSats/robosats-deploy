@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i2p
+  labels:
+    app: i2p
+spec:
+  selector:
+    matchLabels:
+      app: i2p
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: i2p
+    spec:
+      containers:
+        - name: i2p
+          image: geti2p/i2p:i2p-i2p-1.8.0
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 7657 # Router console
+          - containerPort: 7656 # SAM Bridge TCP
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "500Mi"
+            requests:
+              cpu: "10m"
+              memory: "15Mi"
+          volumeMounts:
+            - name: i2p-conf
+              mountPath: /i2p/clients.config
+              subPath: clients.config
+      volumes:
+        - name: i2p-conf
+          configMap:
+            name: i2p-configmap

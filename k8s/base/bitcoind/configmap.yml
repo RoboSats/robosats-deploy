@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bitcoind-configmap
+data:
+  server: '1'
+  txindex: '1'
+  onion: 'tor:9050'
+  proxy: 'tor:9050' # connects to IP nodes through TOR proxy
+  torcontrol: 'tor:9051'
+  i2psam: 'i2p-cluster:7656'
+  i2pacceptincoming: "1"
+  zmqpubrawblock: 'tcp://0.0.0.0:18501'
+  zmqpubrawtx: 'tcp://0.0.0.0:18502'
+  maxuploadtarget: '20'
+  rpcbind: '0.0.0.0'
+  rpcallowip: 0.0.0.0/0
+  testnet: '1'
+  onlynet1: 'onion'
+  onlynet2: 'i2p'
+
+# data:
+#   bitcoin.conf: |
+#     # Reference: https://en.bitcoin.it/wiki/Running_Bitcoin
+#     # https://github.com/bitcoin/bitcoin/blob/master/share/examples/bitcoin.conf
+
+#     server=1
+#     txindex=1
+#     onion=tor:9050
+#     proxy=tor:9050
+#     torcontrol=tor:9051
+#     rpcuser=bitcoindbase
+#     rpcpassword=bitcoindbase
+#     zmqpubrawblock=tcp://0.0.0.0:18501
+#     zmqpubrawtx=tcp://0.0.0.0:18502
+
+#     # limit upload bandwith (in MB per day)
+#     maxuploadtarget=20
+#     # Allow RPC connections from outside of container localhost
+#     rpcbind=0.0.0.0
+#     # Only connect to typical docker IP addresses (Usually from docker host computer)
+#     #rpcallowip=172.0.0.0/255.0.0.0
+#     # Allow access from any IP address (Usually from another computer on LAN)
+#     rpcallowip=0.0.0.0/0
+
+#     # Run on the test network instead of the real bitcoin network.
+#     testnet=1
+
+#     [main]
+#     # Only run on Tor
+#     onlynet=onion
+
+#     # Add Tor seed nodes
+#     addnode=i4x66albngo3sg3w.onion:8333
+
+#     # Some testnet settings needed for 0.19, if using testnet
+#     [test]
+#     # Allow RPC connections from outside of container localhost
+#     rpcbind=0.0.0.0

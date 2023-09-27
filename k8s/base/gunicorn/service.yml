@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: gunicorn # Sets the service name
+  labels:
+    app: gunicorn # Defines app to create service for
+spec:
+  type: ClusterIP # Sets the service type
+  ports:
+    - port: 8000 # Sets the port to run the gunicorn application
+  selector:
+    app: gunicorn

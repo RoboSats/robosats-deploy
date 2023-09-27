@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lnd-configmap
+data:
+  lnd.conf: |
+    # Reference: https://github.com/lightningnetwork/lnd/blob/master/sample-lnd.conf
+
+    debuglevel=info
+    alias=🤖RoboSats⚡ COORDINATOR_NAME | LND
+    color=#4126a7
+    maxpendingchannels=6
+    bitcoin.active=1
+    bitcoin.testnet=1
+    bitcoin.node=bitcoind
+    bitcoind.rpchost=bitcoind
+    bitcoind.zmqpubrawblock=tcp://bitcoind:18501
+    bitcoind.zmqpubrawtx=tcp://bitcoind:18502
+
+    bitcoin.feerate=2000
+    bitcoin.basefee=100000
+    minchansize=1000000
+    bitcoin.minhtlc=75000
+    routerrpc.minrtprob=0.05
+
+    # Silence the wallet-unlock-password-file for first startup (create wallet first)
+    wallet-unlock-password-file=/tmp/autounlockpass
+
+    minchansize=1000000
+    accept-amp=true
+    accept-keysend=true
+    protocol.wumbo-channels=true
+
+    # Needed for LIT
+    rpcmiddleware.enable=true
+
+    # Configuring Tor docs:
+    # https://github.com/lightningnetwork/lnd/blob/master/docs/configuring_tor.md
+    tor.control=tor:9051
+    tor.socks=tor:9050
+    tor.active=1
+    tor.v3=1
+
+    # Listening port will need to be changed if multiple LND instances are running
+    listen=localhost:9735
+
+    # Allow connection to gRPC from host
+    rpclisten=0.0.0.0:10009
+    restlisten=0.0.0.0:8080
+    tlsextradomain=lnd
+    tlsextraip=lnd

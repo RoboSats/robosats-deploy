@@ -1,0 +1,6 @@
+defaultNetwork: "testnet"
+accounts:
+  - name: "RoboSats (Testnet)"
+    serverUrl: "127.0.0.1:10009"
+    lndDir: "/lnd/"
+    password: "sillywhoreadsthis"

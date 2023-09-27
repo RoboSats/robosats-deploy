@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bitcoind-pvc
+  labels:
+    app: bitcoind
+spec:
+  storageClassName: openebs-host
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi

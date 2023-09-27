@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service # Create service
+metadata:
+  name: daphne # Sets the service name
+  labels:
+    app: daphne # Defines app to create service for
+spec:
+  type: ClusterIP # Sets the service type
+  ports:
+    - port: 9000 # Sets the port to run the daphne application
+  selector:
+    app: daphne

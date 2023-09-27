@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-watcher
+  labels:
+    app: telegram-watcher
+spec:
+  selector:
+    matchLabels:
+      app: telegram-watcher
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: telegram-watcher
+    spec:
+      containers:
+        - name: telegram-watcher
+          image: recksato/robosats:534e4c0
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "500Mi"
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+          envFrom:
+            - configMapRef:
+                name: robosats-configmap
+            - secretRef:
+                name: robosats-secret
+            - secretRef:
+                name: postgres-secret # Using the Secret postgres-secret
+          command: ["python3", "manage.py", "telegram_watcher"]  

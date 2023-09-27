@@ -1,0 +1,39 @@
+# More info on deploying Redis the right way
+# https://www.containiq.com/post/deploy-redis-cluster-on-kubernetes
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.0.4-alpine3.16
+          ports:
+          - containerPort: 6379
+          resources:
+            limits:
+              cpu: "1"
+              memory: "100Mi"
+            requests:
+              cpu: "1m"
+              memory: "5Mi"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pvc

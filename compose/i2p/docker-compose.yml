@@ -1,0 +1,11 @@
+# Example i2p service
+
+# i2p:
+#   image: geti2p/i2p
+#   container_name: i2p
+#   ports:
+#     - "7657:7657"
+#     - "54321:12345"
+#     - "54321:12345/udp"
+#   volumes:
+#     - ./i2pconfig:/i2p/.i2p

@@ -1,0 +1,71 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # System
+  - coredns-configmap.yml
+  # Storage
+  - openebs-local-storageclass.yml
+  # General
+  - robosats-configmap.yml
+  - robosats-secret.yml
+  # Bitcoind
+  - bitcoind/service.yml
+  - bitcoind/secret.yml
+  - bitcoind/configmap.yml
+  - bitcoind/pvc.yml
+  - bitcoind/statefulset.yml
+  # LND
+  - lnd/service.yml
+  - lnd/secret.yml
+  - lnd/configmap.yml
+  - lnd/pvc.yml
+  - lnd/statefulset.yml
+  # RoboSats Backend
+  - daphne/service.yml
+  - daphne/deployment.yml
+  - gunicorn/service.yml
+  - gunicorn/deployment.yml
+  # Commands
+  - command/follow-invoices-deployment.yml
+  - command/clean-orders-deployment.yml
+  - command/telegram-watcher-deployment.yml
+  # Celery
+  - celery/worker-deployment.yml
+  - celery/beat-deployment.yml
+  # Nginx
+  - nginx/static-pvc.yml
+  - nginx/configmap.yml
+  - nginx/service.yml
+  - nginx/deployment.yml
+  # Redis
+  - redis/service.yml
+  - redis/pvc.yml
+  - redis/statefulset.yml
+  # Postgres
+  - postgres/service.yml
+  - postgres/secret.yml
+  - postgres/pvc.yml
+  - postgres/statefulset.yml
+  # Tor
+      #- tor/install.yml  # Tor controler with ha load balancer. Cool but can't make it work
+      #- tor/onionservice.yml
+  - tor/service.yml
+  - tor/tor-secret.yml
+      # - tor/onion-secret.yml
+  - tor/pvc.yml
+  - tor/configmap.yml
+  - tor/deployment.yml
+  # I2P
+  - i2p/configmap.yml
+  - i2p/service.yml
+  - i2p/deployment.yml
+  # Thunderhub
+  - thub/service.yml
+  - thub/configmap.yml
+  - thub/deployment.yml
+  # LIT
+  - litd/service.yml
+  - litd/pvc.yml
+  - litd/configmap.yml
+  - litd/secret.yml
+  - litd/statefulset.yml

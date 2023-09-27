@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: onion-pvc # stores onion secrets
+  labels:
+    app: tor
+spec:
+  storageClassName: openebs-hostpath
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi

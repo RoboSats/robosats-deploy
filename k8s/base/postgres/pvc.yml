@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim # Create PVC
+metadata:
+  name: postgres-pvc # Sets name of PV
+  labels:
+    app: postgres # Defines app to create PVC for
+spec:
+  storageClassName: openebs-host
+  accessModes:
+    - ReadWriteOnce # Sets read and write access
+  resources:
+    requests:
+      storage: 10Gi # Sets PVC's size

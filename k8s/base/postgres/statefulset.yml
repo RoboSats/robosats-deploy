@@ -1,0 +1,41 @@
+# postgres StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet # Create a statefulset
+metadata:
+  name: postgres # Set the name of the deployment
+  labels:
+    app: postgres
+spec:
+  replicas: 1 # Set 1 deployment replicas
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:alpine3.16 # Docker image
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "300Mi"
+            requests:
+              cpu: "1m"
+              memory: "5Mi"
+          ports:
+            - containerPort: 5432 # Exposing the container port 5432 for postgres client connections.
+          envFrom:
+            - secretRef:
+                name: postgres-secret # Using the Secret postgres-secret
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data/
+              name: postgres-data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc

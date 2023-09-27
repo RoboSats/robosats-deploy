@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gunicorn
+  labels:
+    app: gunicorn
+spec:
+  selector:
+    matchLabels:
+      app: gunicorn
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: gunicorn
+    spec:
+      containers:
+        - name: gunicorn
+          image: recksato/robosats:534e4c0
+          # imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "500Mi"
+            requests:
+              cpu: "20m"
+              memory: "50Mi"
+          envFrom:
+            - configMapRef:
+                name: robosats-configmap
+            - secretRef:
+                name: robosats-secret
+            - secretRef:
+                name: postgres-secret # Using the Secret postgres-secret
+          command: ["gunicorn","--bind", ":8000", "--max-requests", "1000", "--max-requests-jitter", "200", "-w", "2", "robosats.wsgi:application"]  # ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: static-data
+              mountPath: /usr/src/static
+            - name: lnd-data
+              mountPath: /lnd
+      volumes:
+        - name: static-data
+          persistentVolumeClaim:
+            claimName: static-pvc
+        - name: lnd-data
+          persistentVolumeClaim:
+            claimName: lnd-pvc          

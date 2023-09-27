@@ -1,0 +1,67 @@
+# postgres StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bitcoind
+  labels:
+    app: bitcoind
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitcoind
+  serviceName: bitcoind
+  template:
+    metadata:
+      labels:
+        app: bitcoind
+    spec:
+      containers:
+        - name: bitcoind
+          image: ruimarinho/bitcoin-core:24.0.1-alpine # Note that alpine images are not supported by Core.
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1500Mi"
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+          ports:
+            - containerPort: 18332 # mainnet 8332
+            - containerPort: 18333 # mainnet 8333
+          args: [ # bitcoin.conf arguments from bitcoind-configmap
+            # -reindex, # Enable in case re-indexing is needed
+            --testnet=$(testnet),
+            --server=$(server), 
+            --txindex=$(txindex),
+            --rpcuser=$(rpcuser), 
+            --rpcpassword=$(rpcpassword),
+            --rpcbind=$(rpcbind),
+            --rpcallowip=$(rpcallowip),
+            --onion=$(onion),
+            --proxy=$(proxy),
+            --i2psam=$(i2psam),
+            --i2pacceptincoming=$(i2pacceptincoming),
+            --onlynet=$(onlynet1),
+            --onlynet=$(onlynet2),
+            --torpassword=$(torcontrolpass),
+            --torcontrol=$(torcontrol),
+            --zmqpubrawblock=$(zmqpubrawblock),
+            --zmqpubrawtx=$(zmqpubrawtx),
+            --maxuploadtarget=$(maxuploadtarget),
+           ] 
+          envFrom:
+            - configMapRef:
+                name: bitcoind-configmap
+            - secretRef:
+                name: bitcoind-secret
+            - secretRef:
+                name: tor-secret
+          volumeMounts:
+            - name: bitcoind-data
+              mountPath: /home/bitcoin/.bitcoin
+      volumes:
+        - name: bitcoind-data
+          persistentVolumeClaim:
+            claimName: bitcoind-pvc

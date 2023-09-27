@@ -1,0 +1,169 @@
+version: '3.9'
+services:
+  tor:
+    build: ./tor
+    container_name: tor${SUFFIX}
+    restart: always
+    environment:
+      LOCAL_USER_ID: ${LOCAL_USER_ID}
+      LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
+      SUFFIX: ${SUFFIX}
+    volumes:
+      - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}
+      - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}
+    ports:
+      - ${WEB_LOCAL_PORT}:80
+      - ${THUB_LOCAL_PORT}:3000
+      - ${LIT_LOCAL_PORT}:8443
+
+  bitcoind:
+    image: ruimarinho/bitcoin-core:${BITCOIND_VERSION}
+    container_name: btc${SUFFIX}
+    restart: always
+    environment:
+      LOCAL_USER_ID: ${LOCAL_USER_ID}
+      LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
+      SUFFIX: ${SUFFIX}
+    depends_on:
+      - tor
+    network_mode: service:tor
+    volumes:
+      - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}:ro
+      - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}:ro
+      - ${BITCOIN_DATA:?}:${GUEST_BITCOIN:?}
+      - ${BITCOIN_CONF:?}:${GUEST_BITCOIN:?}/bitcoin.conf
+
+  daphne:
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    container_name: daphne${SUFFIX}
+    restart: always
+    network_mode: service:tor
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    environment:
+      SKIP_COLLECT_STATIC: "true"
+    depends_on:
+      - robosats
+    command: daphne -b 0.0.0.0 -p 9000 robosats.asgi:application
+
+  redis:
+    image: redis:6.2.6
+    container_name: redis${SUFFIX}
+    restart: always
+    volumes:
+      - redisdata:/data
+    network_mode: service:tor
+
+  robosats:
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    container_name: rs${SUFFIX}
+    restart: always
+    environment:
+      LOG_TO_CONSOLE: 1
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    depends_on:
+      - redis
+    volumes:
+      - ${STATIC}:/usr/src/static
+    network_mode: service:tor
+    command: gunicorn --bind :8000 --max-requests 1000 --max-requests-jitter 200 -w ${GUNICORN_WORKERS} robosats.wsgi:application
+
+  postgres:
+    image: postgres:14.2-alpine
+    container_name: sql${SUFFIX}
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_NAME}
+    network_mode: service:tor
+    volumes:
+      - ${DATABASE}:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:1.21.6
+    container_name: nginx${SUFFIX}
+    restart: always
+    volumes:
+      - ${STATIC}:/usr/src/static:ro
+      - ${NGINX_CONFD}:/etc/nginx/conf.d:ro
+      - ${WELLKNOWN}:/usr/src/.well-known:ro
+    network_mode: service:tor
+
+  clean-orders:
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    restart: always
+    container_name: clord${SUFFIX}
+    command: python3 manage.py clean_orders
+    environment:
+      SKIP_COLLECT_STATIC: "true"
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    network_mode: service:tor
+
+  follow-invoices:
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    container_name: invo${SUFFIX}
+    restart: always
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    environment:
+      SKIP_COLLECT_STATIC: "true"
+    command: python3 manage.py follow_invoices
+    network_mode: service:tor
+
+  telegram-watcher:
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    container_name: tg${SUFFIX}
+    restart: always
+    environment:
+      SKIP_COLLECT_STATIC: "true"
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    command: python3 manage.py telegram_watcher
+    network_mode: service:tor
+
+  celery:
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    container_name: cele${SUFFIX}
+    restart: always
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    environment:
+      SKIP_COLLECT_STATIC: "true"
+    command: celery -A robosats worker --loglevel=WARNING
+    depends_on:
+      - redis
+    network_mode: service:tor
+
+  celery-beat:                                 
+    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    container_name: beat${SUFFIX}
+    restart: always
+    env_file:
+      - ${ROBOSATS_ENVS_FILE}
+    environment:
+      SKIP_COLLECT_STATIC: "true"
+    command: celery -A robosats beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - redis
+    network_mode: service:tor
+
+# Example simple backup service (copy/paste to attached storage locations)
+  # backup:
+  #   build: ./backup
+  #   container_name: bu${SUFFIX}
+  #   restart: always
+  #   environment:
+  #     NETWORK: ${NETWORK}
+  #   volumes:
+  #     - ${PG_BACKUP}:/running/database:ro
+  #     - ${BITCOIN_DATA}:/running/bitcoin:ro
+  #     - ${STATIC}:/running/static:ro
+  #     - ${BU_DIR1}:/backup1
+  #     - ${BU_DIR2}:/backup2
+  #     - ${BU_DIR3}:/backup3
+
+volumes:
+  redisdata:

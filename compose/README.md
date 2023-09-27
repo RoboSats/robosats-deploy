@@ -1,0 +1,216 @@
+# Docker Compose based orchestration for RoboSats Coordinator
+Dockerized RoboSats stack. Docker compose with services for nginx, redis, gunicorn, daphne, bitcoind, lnd/cln, back-up, celery, celery-beats and other tools.
+
+# Setup
+
+Let's assume you are using a newly installed OS. For this setup guide we are using `ubuntu server 22.04 (LTS)`
+
+## Install TOR 
+Excerpt from https://linuxconfig.org/install-tor-proxy-on-ubuntu-20-04-linux
+
+```
+sudo apt install tor -y
+```
+
+You can optionally torify the shell persistently
+```
+echo ". torsocks on" >> ~/.bashrc
+```
+
+In case you need to turn off the torification in the future
+```
+source torsocks off
+```
+
+## Install Docker on Ubuntu
+Excerpt from https://docs.docker.com/engine/install/ubuntu/
+
+```
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+
+# Install
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Test
+sudo docker run hello-world
+```
+You can optionally add a symlink to docker image and containers path to another path location
+
+```
+sudo systemctl stop docker, 
+
+sudo rm /var/liv/docker
+
+ln -s /desired/path/docker /var/lib/docker
+```
+
+And restart Docker service
+
+`
+service docker restart
+`
+
+## Clone and configure RoboSats deploy
+
+Clone this repo
+```
+git clone git@github.com:RoboSats/robosats-deploy.git
+cd robosats-deploy/compose
+```
+
+Create or restore the environmental configuration files in new folder `/compose/env/` directory. You can use the `env-sample` files as a guide for your configuration, be exhaustive and make sure every setting is right. 
+```
+cp -r env-sample env
+```
+Then edit and make sure the paths and configurations are right.
+```
+nano env/stack...env
+nano env/robosats...env
+...
+```
+If you were already running `robosats-deploy/compose` in another machine and need to recover, simply bring your existing environmental files from your backup. 
+
+In `/compose/env/stack...env` there is a variable named `SUFFIX` . This one is used to suffix all of your containers and configuration files. For example if you use `-tn` (for testnet), your bitcoind service will be called `btc-tn`, this is an effective way of creating namespaces. The example configuration in `/compose/env-sample/` uses the prefix `-lndtn`, for a LND testnet coordinator. This way, it is easy to run several coordinator orchestration in the same machine. For example, you can use the `-lndmn` prefix for a LND mainnet coordinator configuration or `-clntn` for a CLN Testnet configuration. You can also create alias shortcuts for each of your orchestration.
+
+## Use aliases
+Docker commands are lengthy. You can use aliases to make your task of operating a docker compose based robosats coordinator easier. Take a look at `/compose/aliases.sh` for some useful aliases and shortcuts.
+
+## Example commands for a lnd testnet orchestration (-lndtn containers)
+If you install the aliases you can run the following shortcut commands:
+
+```
+tn build # instead of docker compose -p lndtest --env-file  /home/$(whoami)/robosats-deploy/compose/env/stack-lndtn.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml build
+tn up -d
+# Now the full coordinator orchestration is running
+```
+
+If this is a new coordinator installation, you need to create an admin RoboSats account. Make sure your superuser name matches the `ESCROW_USERNAME` in the `robosats...env` file, by default `"admin"` .
+```
+tn-manage createsuperuser # `tn-manage` is the alias for `docker exec -it rs-lndtn python3 manage.py`
+# Enter a username (admin) and a password. Everything else can be skipped by pressing enter.
+# You can now visit the coordinator panel at "ip:port/coordinator" in your browser
+```
+
+```
+docker compose -p lndtest --env-file env/stack-lndtn.env build
+docker compose -p lndtest --env-file env/stack-lndtn.env up -d
+docker exec -it rs-lndtn cp -R frontend/static/frontend /usr/src/static
+docker exec -it rs-lndtn python3 manage.py createsuperuser
+docker compose -p lndtest --env-file env/stack-lndtn.env restart
+```
+You could also just check all services logs
+
+`tn logs -f`
+
+Unlock or 'create' the lnd node
+
+`tn-lncli unlock`
+
+Create p2wkh addresses
+
+`tn-lncli newaddress p2wkh` (note without alias this command would be ``docker exec -it lnd-lndtn lncli --network=testnet newaddress p2wkh``)
+
+Wallet balance
+
+`tn-lncli walletbalance`
+
+Connect
+
+`tn-lncli connect node_id@ip:9735`
+
+Open channel
+
+`tn-lncli openchannel node_id --local_amt LOCAL_AMT --push_amt PUSH_AMT`
+
+## If needed; this is how to clean restart the docker instance
+Stop the container(s) using the following command:
+
+`docker compose -p lndtest --env-file  /home/$(whoami)/robosats-deploy/compose/env/stack-lndtn.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml down`
+Delete all containers using the following command:
+`docker  rm -f $(docker ps -a -q)`
+Delete all volumes using the following command:
+`docker volume rm $(docker volume ls -q)`
+Restart the containers using the following command:
+`docker compose -p robotest --env-file env/stack-lndtn.env up`
+
+
+Delete <None> images
+`docker rmi $(docker images -f 'dangling=true' -q)`
+
+## Add Onion services
+
+At the moment the RoboSats image does not use TorControl of the Tor container to automatically generate the Onion hidden service. It simply exposes the port (18000 in the `/compose/env-sample` testnet orchestration) and you can create a hidden service using your base machine `torrc` .
+ 
+```
+ sudo nano /etc/tor/torrc
+```
+
+If you are running both a mainnet and a testnet coordinator you could add something like this to `torrc`
+```
+# Robosats Testnet Onion Service
+HiddenServiceDir /var/lib/tor/robotest/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:18000
+#... mainnet over robotest
+HiddenServicePort 8001 127.0.0.1:8000
+
+
+# Robosats Mainnet Onion Service
+HiddenServiceDir /var/lib/tor/robomain/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:8000
+#... testnet over robomain
+HiddenServicePort 8001 127.0.0.1:18000
+```
+
+Additionally, if you want so, you can also create Onion endpoints to SSH remotely into your machine or to services to control your node (Thunderbung) ot to monitor your server (e.g Cockpit).
+
+```
+# SSH Hidden Service
+HiddenServiceDir /var/lib/tor/sshd/
+HiddenServiceVersion 3
+HiddenServicePort 22 127.0.0.1:22
+
+
+# Management Services
+HiddenServiceDir /var/lib/tor/management/
+HiddenServiceVersion 3
+# Cockpit
+HiddenServicePort 1000 127.0.0.1:9090
+# Thub mainnet and testnet
+HiddenServicePort 3000 127.0.0.1:3000
+HiddenServicePort 3001 127.0.0.1:3001
+# Lit mainnet and testnet
+HiddenServicePort 4000 127.0.0.1:4000
+HiddenServicePort 4001 127.0.0.1:4001
+```
+
+Restart
+
+`sudo /etc/init.d/tor restart`
+
+# Install Cockpit 
+Just a useful tool to monitor your machine that might come handy. Specially useful if you use ZFS as file system (recommended).
+
+```
+sudo apt-get install cockpit -y
+sudo systemctl enable --now cockpit.socket
+sudo apt-get install podman cockpit-podman -y
+sudo systemctl enable --now podman
+git clone https://github.com/45Drives/cockpit-zfs-manager.git
+sudo cp -r cockpit-zfs-manager/zfs /usr/share/cockpit
+sudo apt-get install samba -y
+```
+Access cockpit on port 9090

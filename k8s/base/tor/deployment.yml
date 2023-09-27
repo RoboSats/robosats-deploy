@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tor
+  labels:
+    app: tor
+spec:
+  selector:
+    matchLabels:
+      app: tor
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: tor
+    spec:
+      # initContainers:
+      #   - name: changeowner
+      #     image: busybox
+      #     command: ["sh", "-c", "chown -R 100:100 /var/lib/tor/robosite"]   
+      #     volumeMounts:
+      #       - name: onion
+      #         mountPath: /var/lib/tor/robosite/
+      #         readOnly: false
+      containers:
+        - name: tor
+          image: osminogin/tor-simple:0.4.7.8
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 9050 # torproxy
+          - containerPort: 9051 # torcontrol
+          command: [
+            tor,
+            HashedControlPassword, 
+            $(torcontrolhashedpass)
+            ]
+          envFrom:
+            - secretRef:
+                name: tor-secret
+          resources:
+            limits:
+              cpu: "50m"
+              memory: "100Mi"
+            requests:
+              cpu: "1m"
+              memory: "5Mi"
+          volumeMounts:
+            - name: tor-conf
+              mountPath: /etc/tor/torrc
+              subPath: torrc
+            # - name: onion
+            #   mountPath: /var/lib/tor/robosite/
+            #   readOnly: true
+            # - name: onion
+            #   mountPath: /var/lib/tor/robosite/
+            #   readOnly: true
+      # securityContext:
+      #   runAsUser: 0
+      volumes:
+        - name: tor-conf
+          configMap:
+            name: tor-configmap
+        # - name: onion
+        #   persistentVolumeClaim:
+        #     claimName: onion-pvc
+
+        # - name: onion
+        #   secret:
+        #     secretName: onion-secret
+        #     items:
+        #     - key: publicKeyFile
+        #       path: hs_ed25519_public_key
+        #     - key: privateKeyFile
+        #       path: hs_ed25519_secret_key
+        #     - key: onionAddress
+        #       path: hostname
+          
+
+## Mounting onion secrets
+
+      #       - name: onion-secret
+      #         mountPath: /var/lib/tor/robosite/
+      #         readOnly: true
+      # securityContext:
+      #   runAsUser: 0
+      #   runAsGroup: 0
+      #   fsGroup: 0
+      # volumes:
+      #   - name: tor-conf
+      #     configMap:
+      #       name: tor-configmap
+      #   - name: onion-secret
+      #     persistentVolumeClaim:
+      #       claimName: tor-pvc

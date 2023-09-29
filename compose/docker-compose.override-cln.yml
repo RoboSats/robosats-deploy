@@ -12,6 +12,7 @@ services:
       - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}:ro
       - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}:ro
       - ${CLN_DATA:?}:/root/.lightning
+      - ${CLN_CONFIG:?}:/root/.lightning/config
       - ${BITCOIN_DATA}:/root/.bitcoin
     command: lightningd
 

@@ -5,8 +5,6 @@ services:
     container_name: tor${SUFFIX}
     restart: always
     environment:
-      LOCAL_USER_ID: ${LOCAL_USER_ID}
-      LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
       SUFFIX: ${SUFFIX}
     volumes:
       - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}
@@ -20,10 +18,6 @@ services:
     image: ruimarinho/bitcoin-core:${BITCOIND_VERSION}
     container_name: btc${SUFFIX}
     restart: always
-    environment:
-      LOCAL_USER_ID: ${LOCAL_USER_ID}
-      LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
-      SUFFIX: ${SUFFIX}
     depends_on:
       - tor
     network_mode: service:tor

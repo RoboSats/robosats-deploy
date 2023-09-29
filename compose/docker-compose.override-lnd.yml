@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   lnd:
-    build: ./lnd/${LND_VERSION}
+    image: lightninglabs/lnd:${LND_VERSION}
     restart: always
     network_mode: service:tor
     container_name: lnd${SUFFIX}
@@ -11,19 +11,17 @@ services:
     volumes:
       - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}:ro
       - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}:ro
-      - ${LND_DATA:?}:${GUEST_LND:?}
       - ${LND_DATA:?}:/root/.lnd
+      - ${LND_CONF:?}:/root/.lnd/lnd.conf
+      - ${LND_AUTOUNLOCK_PWD:?}:/tmp/pwd:ro
     command: lnd
     environment:
-      LOCAL_USER_ID: ${LOCAL_USER_ID}
-      LOCAL_GROUP_ID: ${LOCAL_GROUP_ID}
       SUFFIX: ${SUFFIX}
       LND_RPC_PORT: ${GUEST_LND_RPC_PORT:?}
       LND_REST_PORT: ${GUEST_LND_REST_PORT:?}
-      AUTO_UNLOCK_PWD: ${AUTO_UNLOCK_PWD}
 
   thub:
-    build: ./thunderhub
+    image: apotdevin/thunderhub:v0.13.18
     restart: always
     network_mode: service:tor
     container_name: thub${SUFFIX}
@@ -34,6 +32,7 @@ services:
       - lnd
     volumes:
       - ${LND_DATA:?}:/lnd/:ro
+      - ${THUB_ACCOUNTS:?}:${THUB_ACCOUNTS_CONFIG_PATH:?}
 
   lit:
     image: lightninglabs/lightning-terminal:v0.10.5-alpha

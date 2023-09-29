@@ -70,19 +70,21 @@ git clone git@github.com:RoboSats/robosats-deploy.git
 cd robosats-deploy/compose
 ```
 
-Create or restore the environmental configuration files in new folder `/compose/env/` directory. You can use the `env-sample` files as a guide for your configuration, be exhaustive and make sure every setting is right. 
+Create or restore the environmental configuration files in new folder `/compose/env/` directory. You can use the `env-sample` files as a guide for your configuration, be exhaustive and make sure every setting is right. The file `compose.env` contains all the high level configuration for your orchestration.
+
 ```
 cp -r env-sample env
 ```
 Then edit and make sure the paths and configurations are right.
 ```
-nano env/stack...env
-nano env/robosats...env
+nano env/{namespace}/compose...env
+nano env/{namespace}/crobosats...env
+nano env/{namespace}/lnd.conf
 ...
 ```
 If you were already running `robosats-deploy/compose` in another machine and need to recover, simply bring your existing environmental files from your backup. 
 
-In `/compose/env/stack...env` there is a variable named `SUFFIX` . This one is used to suffix all of your containers and configuration files. For example if you use `-tn` (for testnet), your bitcoind service will be called `btc-tn`, this is an effective way of creating namespaces. The example configuration in `/compose/env-sample/` uses the prefix `-lndtn`, for a LND testnet coordinator. This way, it is easy to run several coordinator orchestration in the same machine. For example, you can use the `-lndmn` prefix for a LND mainnet coordinator configuration or `-clntn` for a CLN Testnet configuration. You can also create alias shortcuts for each of your orchestration.
+In `/compose/env/compose...env` there is a variable named `SUFFIX` . This one is used to suffix all of your containers and configuration files. For example if you use `-tn` (for testnet), your bitcoind service will be called `btc-tn`, this is an effective way of creating namespaces. The example configuration in `/compose/env-sample/` uses the prefix `-lndtn`, for a LND testnet coordinator. This way, it is easy to run several coordinator orchestration in the same machine. For example, you can use the `-lndmn` prefix for a LND mainnet coordinator configuration or `-clntn` for a CLN Testnet configuration. You can also create alias shortcuts for each of your orchestration.
 
 ## Use aliases
 Docker commands are lengthy. You can use aliases to make your task of operating a docker compose based robosats coordinator easier. Take a look at `/compose/aliases.sh` for some useful aliases and shortcuts.

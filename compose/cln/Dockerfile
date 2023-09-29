@@ -25,7 +25,6 @@ RUN cd /tmp/cln-grpc-hold \
 FROM elementsproject/lightningd:v23.08 as final
 
 COPY --from=builder /tmp/cln-grpc-hold/target/release/cln-grpc-hold /tmp/cln-grpc-hold
-COPY config /tmp/config
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 

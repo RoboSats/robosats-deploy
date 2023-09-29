@@ -6,7 +6,7 @@
 ## Edit the /home/user path directory and orchestration suffix (-lndmn) as needed
 
 ## ROBOMAIN Docker-Compose (lndmn)
-alias mn="docker compose -p lndmain --env-file  /home/$(whoami)/robosats-deploy/compose/env/stack-lndmn.env -f /home/$(whoami)/robosats-deploy/compose/compose.lnd.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
+alias mn="docker compose -p lndmain --env-file  /home/$(whoami)/robosats-deploy/compose/env/lndmn/compose.env -f /home/$(whoami)/robosats-deploy/compose/compose.lnd.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
 
 ## Example usage:
 ## Start orchestration
@@ -25,7 +25,6 @@ alias mn="docker compose -p lndmain --env-file  /home/$(whoami)/robosats-deploy/
 alias mn-lncli="docker exec -it lnd-lndmn lncli"
 
 # DJANGO MANAGE
-
 alias mn-manage="docker exec -it rs-lndmn python3 manage.py"
 
 # POSTGRESS
@@ -36,7 +35,7 @@ alias mn-pg-restore='docker exec -i sql-lndmn /bin/bash -c "PGPASSWORD=robosats 
 #################################################################################################################
 ## ROBOTEST Docker-Compose (same aliases as above, but for a testnet `lndtn` orchestration`)
 
-alias tn="docker compose -p lndtest --env-file  /home/$(whoami)/robosats-deploy/compose/env/stack-lndtn.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
+alias tn="docker compose -p lndtest --env-file  /home/$(whoami)/robosats-deploy/compose/env/lndtn/compose.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
 
 ## Example uses:
 ## > robotest up -d

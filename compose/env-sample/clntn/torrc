@@ -5,7 +5,6 @@ Log notice file /var/log/tor/notices.log
 DataDirectory /var/lib/tor
 DataDirectoryGroupReadable 1
 
-
 ## Enable ControlPort
 ControlPort 9051
 CookieAuthentication 1

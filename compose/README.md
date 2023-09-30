@@ -153,13 +153,13 @@ Delete <None> images
 
 ## Add Onion services
 
-At the moment the RoboSats image does not use TorControl of the Tor container to automatically generate the Onion hidden service. It simply exposes the port (18000 in the `/compose/env-sample` testnet orchestration) and you can create a hidden service using your base machine `torrc` .
- 
+At the moment the RoboSats image does not use TorControl of the Tor container to automatically generate the Onion hidden service. It simply exposes the port (18000 in the `/compose/env-sample` testnet orchestration) and exposes a hidden service defined  `/env/{namespace}/torrc`.
+
+You can edit `torcc` to add or remove services (e.g., expose Thunderhub as a hidden service)
 ```
- sudo nano /etc/tor/torrc
+ sudo nano /env/{namespace}/torrc
 ```
 
-If you are running both a mainnet and a testnet coordinator you could add something like this to `torrc`
 ```
 # Robosats Testnet Onion Service
 HiddenServiceDir /var/lib/tor/robotest/
@@ -167,17 +167,17 @@ HiddenServiceVersion 3
 HiddenServicePort 80 127.0.0.1:18000
 #... mainnet over robotest
 HiddenServicePort 8001 127.0.0.1:8000
-
-
-# Robosats Mainnet Onion Service
-HiddenServiceDir /var/lib/tor/robomain/
-HiddenServiceVersion 3
-HiddenServicePort 80 127.0.0.1:8000
-#... testnet over robomain
-HiddenServicePort 8001 127.0.0.1:18000
 ```
 
-Additionally, if you want so, you can also create Onion endpoints to SSH remotely into your machine or to services to control your node (Thunderbung) ot to monitor your server (e.g Cockpit).
+You can print the hidden service hostname. 
+```
+sudo cat /env/{namespace}/tor/robotest/hostname
+```
+Note that if you try to now access your RoboSats instance by pasting this Onion address in your browser you will see a 400 Error. This is due to the hostname not being allowed by the backend. You have to edit your `/env/{namespace}/robosats.env` and add your  `.....onion` as `HOST_NAME` or `HOST_NAME2`.
+
+And if you want so, you can replace the ed25519 keys to set your own custom hostname. You can mine a vanity onion with [mkp224o](https://github.com/cathugger/mkp224o)
+
+Additionally, you can also edit your machine's `/etc/tor/torrc` to create Onion endpoints to SSH remotely into your machine or to services to monitor your server (e.g Cockpit).
 
 ```
 # SSH Hidden Service
@@ -191,12 +191,6 @@ HiddenServiceDir /var/lib/tor/management/
 HiddenServiceVersion 3
 # Cockpit
 HiddenServicePort 1000 127.0.0.1:9090
-# Thub mainnet and testnet
-HiddenServicePort 3000 127.0.0.1:3000
-HiddenServicePort 3001 127.0.0.1:3001
-# Lit mainnet and testnet
-HiddenServicePort 4000 127.0.0.1:4000
-HiddenServicePort 4001 127.0.0.1:4001
 ```
 
 Restart

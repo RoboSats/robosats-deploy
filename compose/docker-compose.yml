@@ -7,8 +7,8 @@ services:
     environment:
       SUFFIX: ${SUFFIX}
     volumes:
-      - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}
-      - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}
+      - ${TOR_DATA:?}:/var/lib/tor
+      - ${TOR_CONFIG:?}:/etc/tor/torrc
     ports:
       - ${WEB_LOCAL_PORT}:80
       - ${THUB_LOCAL_PORT}:3000
@@ -22,8 +22,7 @@ services:
       - tor
     network_mode: service:tor
     volumes:
-      - ${TOR_DATA:?}:${GUEST_TOR_DATA:?}:ro
-      - ${TOR_CONFIG:?}:${GUEST_TOR_CONFIG:?}:ro
+      - ${TOR_DATA:?}:/var/lib/tor:ro
       - ${BITCOIN_DATA:?}:${GUEST_BITCOIN:?}
       - ${BITCOIN_CONF:?}:${GUEST_BITCOIN:?}/bitcoin.conf
 

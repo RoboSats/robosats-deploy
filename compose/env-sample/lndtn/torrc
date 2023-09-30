@@ -5,17 +5,13 @@ Log notice file /var/log/tor/notices.log
 DataDirectory /var/lib/tor
 DataDirectoryGroupReadable 1
 
-## Robosats Testnet Onion Service
-HiddenServiceDir /var/lib/tor/web/
-HiddenServiceVersion 3
-HiddenServicePort 80 nginx:80
-HiddenServicePort 88 nginx:80
-HiddenServicePort 800 nginx:80
-HiddenServicePort 8000 nginx:80
-HiddenServicePort 8888 nginx:80
-
 ## Enable ControlPort
 ControlPort 9051
 CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 CookieAuthFile /var/lib/tor/control_auth_cookie
+
+# Robosats LND Testnet Onion Service
+HiddenServiceDir /var/lib/tor/robotest/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:80

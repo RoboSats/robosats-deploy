@@ -15,7 +15,7 @@ services:
       - ${LIT_LOCAL_PORT}:8443
 
   bitcoind:
-    image: ruimarinho/bitcoin-core:${BITCOIND_VERSION}
+    image: ruimarinho/bitcoin-core:${BITCOIND_TAG:-24.0.1-alpine@sha256:624b6fb1c282a3db6438ff35fbb9eed6ae260c66ffbb427ae72edd7da6a0ecdc}
     container_name: btc${SUFFIX}
     restart: always
     depends_on:
@@ -27,7 +27,7 @@ services:
       - ${BITCOIN_CONF:?}:${GUEST_BITCOIN:?}/bitcoin.conf
 
   daphne:
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     container_name: daphne${SUFFIX}
     restart: always
     network_mode: service:tor
@@ -40,7 +40,7 @@ services:
     command: daphne -b 0.0.0.0 -p 9000 robosats.asgi:application
 
   redis:
-    image: redis:6.2.6
+    image: redis:${REDIS_TAG:-7.2.1-alpine@sha256:7f5a0dfbf379db69dc78434091dce3220e251022e71dcdf36207928cbf9010de}
     container_name: redis${SUFFIX}
     restart: always
     volumes:
@@ -48,7 +48,7 @@ services:
     network_mode: service:tor
 
   robosats:
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     container_name: rs${SUFFIX}
     restart: always
     environment:
@@ -63,7 +63,7 @@ services:
     command: gunicorn --bind :8000 --max-requests 1000 --max-requests-jitter 200 -w ${GUNICORN_WORKERS} robosats.wsgi:application
 
   postgres:
-    image: postgres:14.2-alpine
+    image: postgres:${POSTGRES_TAG:-14.2-alpine@sha256:2fb5718f2a23dbac9bd1258e886eee90250a5903785e3136d62dd65e19f34982}
     container_name: sql${SUFFIX}
     restart: always
     environment:
@@ -75,7 +75,7 @@ services:
       - ${DATABASE}:/var/lib/postgresql/data
 
   nginx:
-    image: nginx:1.21.6
+    image: nginx:${NGINX_TAG:-1.25.2-alpine-slim@sha256:1b0cb433e90260a96528c987ee78b797e842d510473935304a0931536d10f50d}
     container_name: nginx${SUFFIX}
     restart: always
     volumes:
@@ -85,7 +85,7 @@ services:
     network_mode: service:tor
 
   clean-orders:
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     restart: always
     container_name: clord${SUFFIX}
     command: python3 manage.py clean_orders
@@ -96,7 +96,7 @@ services:
     network_mode: service:tor
 
   follow-invoices:
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     container_name: invo${SUFFIX}
     restart: always
     env_file:
@@ -107,7 +107,7 @@ services:
     network_mode: service:tor
 
   telegram-watcher:
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     container_name: tg${SUFFIX}
     restart: always
     environment:
@@ -118,7 +118,7 @@ services:
     network_mode: service:tor
 
   celery:
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     container_name: cele${SUFFIX}
     restart: always
     env_file:
@@ -131,7 +131,7 @@ services:
     network_mode: service:tor
 
   celery-beat:                                 
-    image: recksato/robosats:${ROBOSATS_DOCKER_TAG}
+    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
     container_name: beat${SUFFIX}
     restart: always
     env_file:

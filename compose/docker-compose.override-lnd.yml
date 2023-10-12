@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   lnd:
-    image: lightninglabs/lnd:${LND_VERSION}
+    image: lightninglabs/lnd:${LND_TAG:-v0.17.0-beta@sha256:2083f29a36bc0b40c6c9c687c9e71bc447bd4f9f9d21aea1f3d5b1d462e7e93e}
     restart: always
     network_mode: service:tor
     container_name: lnd${SUFFIX}
@@ -20,7 +20,7 @@ services:
       LND_REST_PORT: ${GUEST_LND_REST_PORT:?}
 
   thub:
-    image: apotdevin/thunderhub:v0.13.18
+    image: apotdevin/thunderhub:${THUNDERHUB_TAG:-v0.13.23@sha256:5ad834045dc3030ec199615827c415ca07729da32c4739afd3adfc662af4fe65}
     restart: always
     network_mode: service:tor
     container_name: thub${SUFFIX}
@@ -34,7 +34,7 @@ services:
       - ${THUB_ACCOUNTS:?}:${THUB_ACCOUNTS_CONFIG_PATH:?}
 
   lit:
-    image: lightninglabs/lightning-terminal:v0.10.5-alpha
+    image: lightninglabs/lightning-terminal:${LIT_TAG:-v0.11.0-alpha@sha256:dc14c495f699b14c2d75c43097ad3ab40e7287fc136a3203df9cffe17b867b71}
     restart: always
     network_mode: service:tor
     container_name: lit${SUFFIX}

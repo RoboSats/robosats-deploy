@@ -210,3 +210,52 @@ sudo cp -r cockpit-zfs-manager/zfs /usr/share/cockpit
 sudo apt-get install samba -y
 ```
 Access cockpit on port 9090
+
+# Setup on Umbrel
+
+If you're using an Umbrel node, and you want to integrate RoboSats Coordinator with Umbrel LND node (mainnet) you can edit the configurations file as follows.
+
+## Prerequisites
+
+Before proceeding, make sure you've set up your Umbrel node and it's fully synced with the Bitcoin network. This guide utilizes LND as backend.
+
+## Edit compose.env, robosats.env, docker-compose.yml and docker-compose.override-lnd.yml
+
+Obviously, you should comment out all the containers whose services already running on Umbrel. Typically you would want to comment out bitcoind, thunderhub and lightning-terminal.
+
+Secondly, you need to give network access to the LND instance from the Robosats Coordinator docker orchestration.
+
+To do so, follow the steps outlined below.
+
+### Edit Environment Files
+
+1. **Set LND Data Path**:  
+   Set the `LND_DATA` variable in compose.env to the path where your LND data is located as follows:
+```env
+LND_DATA=/umbrel-path-location/app-data/lightning/data/lnd/
+```
+
+2. **Set LND gRPC Host**:  
+Update the `LND_GRPC_HOST` variable to your specific gRPC host and port in robosats.env. Typically this is done as below:
+```env
+LND_GRPC_HOST=10.21.21.9:10009
+```
+
+
+### Edit Docker Compose File
+
+3. **Modify Networks Under TOR Container**:  
+Navigate to the TOR container section in your `docker-compose.yml` file and add `umbrel_main_network` under the `networks` field.
+```yaml
+networks:
+  - umbrel_main_network
+```
+
+Add Network Definition:
+At the end of your docker-compose.yml file, add the definition for umbrel_main_network.
+    
+```yaml
+networks:
+  umbrel_main_network:
+    external: true
+```

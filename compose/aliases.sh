@@ -6,7 +6,7 @@
 ## Edit the /home/user path directory and orchestration suffix (-lndmn) as needed
 
 ## ROBOMAIN Docker-Compose (lndmn)
-alias mn="docker compose -p lndmain --env-file  /home/$(whoami)/robosats-deploy/compose/env/lndmn/compose.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.lnd.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
+alias mn="docker compose -p lndmain --env-file  /home/$(whoami)/robosats-deploy/compose/env/lndmn/compose.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
 
 ## Example usage:
 ## Start orchestration

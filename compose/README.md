@@ -189,6 +189,10 @@ HiddenServicePort 22 127.0.0.1:22
 # Management Services
 HiddenServiceDir /var/lib/tor/management/
 HiddenServiceVersion 3
+# Thunderhub
+HiddenServicePort 3000 127.0.0.1:3000
+# LIT
+HiddenServicePort 4000 127.0.0.1:8443
 # Cockpit
 HiddenServicePort 1000 127.0.0.1:9090
 ```

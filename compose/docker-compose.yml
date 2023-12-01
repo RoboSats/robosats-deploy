@@ -27,7 +27,7 @@ services:
       - ${BITCOIN_CONF:?}:${GUEST_BITCOIN:?}/bitcoin.conf
 
   daphne:
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     container_name: daphne${SUFFIX}
     restart: always
     network_mode: service:tor
@@ -48,7 +48,7 @@ services:
     network_mode: service:tor
 
   robosats:
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     container_name: rs${SUFFIX}
     restart: always
     environment:
@@ -85,7 +85,7 @@ services:
     network_mode: service:tor
 
   clean-orders:
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     restart: always
     container_name: clord${SUFFIX}
     command: python3 manage.py clean_orders
@@ -96,7 +96,7 @@ services:
     network_mode: service:tor
 
   follow-invoices:
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     container_name: invo${SUFFIX}
     restart: always
     env_file:
@@ -107,7 +107,7 @@ services:
     network_mode: service:tor
 
   telegram-watcher:
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     container_name: tg${SUFFIX}
     restart: always
     environment:
@@ -118,7 +118,7 @@ services:
     network_mode: service:tor
 
   celery:
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     container_name: cele${SUFFIX}
     restart: always
     env_file:
@@ -131,7 +131,7 @@ services:
     network_mode: service:tor
 
   celery-beat:                                 
-    image: recksato/robosats:${ROBOSATS_TAG:-77783e1@sha256:38d208a757ba20f578320a178db70f4d539f827dc25379eebc002c6310ae707e}
+    image: recksato/robosats:${ROBOSATS_TAG:-2c1ea02@sha256:6b6e6d2485ff6652c1ce89f68baf5294284327d786992045e22ac8df8111107a}
     container_name: beat${SUFFIX}
     restart: always
     env_file:

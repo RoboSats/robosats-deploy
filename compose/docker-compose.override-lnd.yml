@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   lnd:
-    image: lightninglabs/lnd:${LND_TAG:-v0.17.0-beta@sha256:2083f29a36bc0b40c6c9c687c9e71bc447bd4f9f9d21aea1f3d5b1d462e7e93e}
+    image: lightninglabs/lnd:${LND_TAG:-v0.17.2-beta@sha256:cb24c0a7778cce16b30b22e97826d8b971bec0c2f40aba797fe555ac1e82ece4}
     restart: always
     network_mode: service:tor
     container_name: lnd${SUFFIX}

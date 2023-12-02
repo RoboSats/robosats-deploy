@@ -13,7 +13,7 @@ services:
       - ${LND_DATA:?}:/root/.lnd
       - ${LND_CONF:?}:/root/.lnd/lnd.conf
       - ${LND_AUTOUNLOCK_PWD:?}:/tmp/pwd:ro
-    command: lnd
+    entrypoint: lnd
     environment:
       SUFFIX: ${SUFFIX}
       LND_RPC_PORT: ${GUEST_LND_RPC_PORT:?}
@@ -41,7 +41,7 @@ services:
     depends_on:
       - tor
       - lnd
-    command: litd --uipassword ${LIT_PASSWORD} --network=${NETWORK} --lnd-mode=remote --remote.lnd.rpcserver=127.0.0.1:${GUEST_LND_RPC_PORT:?} --remote.lnd.macaroonpath=/lnd/data/chain/bitcoin/${NETWORK}/admin.macaroon  --remote.lnd.tlscertpath=/lnd/tls.cert --httpslisten=0.0.0.0:8443 --loop.server.proxy=127.0.0.1:9050 --loop.loopoutmaxparts=25 --loop.maxlsatfee=1
+    entrypoint: litd --uipassword ${LIT_PASSWORD} --network=${NETWORK} --lnd-mode=remote --remote.lnd.rpcserver=127.0.0.1:${GUEST_LND_RPC_PORT:?} --remote.lnd.macaroonpath=/lnd/data/chain/bitcoin/${NETWORK}/admin.macaroon  --remote.lnd.tlscertpath=/lnd/tls.cert --httpslisten=0.0.0.0:8443 --loop.server.proxy=127.0.0.1:9050 --loop.loopoutmaxparts=25 --loop.maxlsatfee=1
     volumes:
       - ${LND_DATA:?}:/lnd/:ro
       - ${LIT_DATA:?}:/root/

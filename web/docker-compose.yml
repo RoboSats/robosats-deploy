@@ -6,6 +6,8 @@ services:
     container_name: robosats
     restart: always
     network_mode: service:tor
+    volumes:
+      - ./serve_misc:/serve_misc/
   tor:
     build: ../compose/tor
     container_name: tor

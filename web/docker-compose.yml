@@ -8,6 +8,7 @@ services:
     network_mode: service:tor
     volumes:
       - ./serve_misc:/serve_misc/
+      - ./custom_nginx.conf:/etc/nginx/nginx.conf
   tor:
     build: ../compose/tor
     container_name: tor

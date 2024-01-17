@@ -1,0 +1,1 @@
+If you set up a clearnetonion.eu.org clearnet tunnel, you can drop in this folder you clearnetonion_verify_*.txt file.

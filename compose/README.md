@@ -3,10 +3,14 @@ Dockerized RoboSats stack. Docker compose with services for nginx, redis, gunico
 
 # Setup
 
-Let's assume you are using a newly installed OS. For this setup guide we are using `ubuntu server 22.04 (LTS)`
+Let's assume you are using a newly installed OS. For this setup guide we are using `Ubuntu server 22.04 (LTS)`
 
 ## Install TOR 
-Excerpt from https://linuxconfig.org/install-tor-proxy-on-ubuntu-20-04-linux
+Ubuntu users are advised to install Tor from the Tor Project's own repositories, rather than their OS repos.
+
+Follow this guide for information about adding the Tor Project Repositories to your sources:
+
+https://linuxconfig.org/install-tor-proxy-on-ubuntu-20-04-linux
 
 ```
 sudo apt install tor -y

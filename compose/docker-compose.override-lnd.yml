@@ -46,6 +46,15 @@ services:
       - ${LND_DATA:?}:/lnd/:ro
       - ${LIT_DATA:?}:/root/
 
+  boltz-client:
+    image: ${BOLTZ_TAG:-boltz/boltz-client:2.0.0-beta@sha256:1559d292f4aaa2899b8fc9953c3643c194ad8b89d9232ac70b9a49f32c7756bb}
+    container_name: boltz${SUFFIX}
+    restart: always
+    volumes:
+      - ${LND_DATA:?}:/root/.lnd:ro
+      - ${BOLTZ_DATA:?}:/root/.boltz
+      - ${BOLTZ_CONF:?}:/root/.boltz/boltz.toml
+
 # Patch common services
   tor:
     ports:

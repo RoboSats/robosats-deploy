@@ -63,10 +63,10 @@ services:
   celery:
     volumes:
       - ${LND_DATA}:/lnd
-  # backup:
-  #   volumes:
-  #     - ${LND_DATA}:/running/lnd:ro
-  #     - ${LIT_DATA}:/running/lit:ro
+  backup:
+    volumes:
+      - ${LND_DATA}:/running/lnd:ro
+      - ${LIT_DATA}:/running/lit:ro
 
 # Other LND services you might want to enable
 

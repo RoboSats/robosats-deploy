@@ -144,19 +144,19 @@ services:
     network_mode: service:tor
 
 # Example simple backup service (copy/paste to attached storage locations)
-  # backup:
-  #   build: ./backup
-  #   container_name: bu${SUFFIX}
-  #   restart: always
-  #   environment:
-  #     NETWORK: ${NETWORK}
-  #   volumes:
-  #     - ${PG_BACKUP}:/running/database:ro
-  #     - ${BITCOIN_DATA}:/running/bitcoin:ro
-  #     - ${STATIC}:/running/static:ro
-  #     - ${BU_DIR1}:/backup1
-  #     - ${BU_DIR2}:/backup2
-  #     - ${BU_DIR3}:/backup3
+  backup:
+    build: ./backup
+    container_name: bu${SUFFIX}
+    restart: always
+    environment:
+     NETWORK: ${NETWORK}
+    volumes:
+     - ${PG_BACKUP}:/running/database:ro
+     - ${BITCOIN_DATA}:/running/bitcoin:ro
+     - ${STATIC}:/running/static:ro
+     - ${BU_DIR1}:/backup1
+     - ${BU_DIR2}:/backup2 
+     - ${BU_DIR3}:/backup3
 
 volumes:
   redisdata:

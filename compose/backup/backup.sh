@@ -11,13 +11,13 @@ mkdir -p /backup1/lnd/data/chain/bitcoin/${NETWORK:?}
 mkdir -p /backup2/lnd/data/chain/bitcoin/${NETWORK:?}
 mkdir -p /backup3/lnd/data/chain/bitcoin/${NETWORK:?}
 
-mkdir -p /backup1/lnd2
-mkdir -p /backup2/lnd2
-mkdir -p /backup3/lnd2
+# mkdir -p /backup1/lnd2
+# mkdir -p /backup2/lnd2
+# mkdir -p /backup3/lnd2
 
-mkdir -p /backup1/lnd2/data/chain/bitcoin/${NETWORK:?}
-mkdir -p /backup2/lnd2/data/chain/bitcoin/${NETWORK:?}
-mkdir -p /backup3/lnd2/data/chain/bitcoin/${NETWORK:?}
+# mkdir -p /backup1/lnd2/data/chain/bitcoin/${NETWORK:?}
+# mkdir -p /backup2/lnd2/data/chain/bitcoin/${NETWORK:?}
+# mkdir -p /backup3/lnd2/data/chain/bitcoin/${NETWORK:?}
 
 mkdir -p /backup1/bitcoin
 mkdir -p /backup2/bitcoin
@@ -45,9 +45,9 @@ do
     rsync -auzhPq /running/lnd/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup3/lnd/data/chain/bitcoin/${NETWORK:?}/channel.backup
 
 
-    rsync -auzhPq /running/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup1/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup
-    rsync -auzhPq /running/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup2/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup
-    rsync -auzhPq /running/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup3/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup
+    # rsync -auzhPq /running/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup1/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup
+    # rsync -auzhPq /running/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup2/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup
+    # rsync -auzhPq /running/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup /backup3/lnd2/data/chain/bitcoin/${NETWORK:?}/channel.backup
 
     sleep 5
 done
@@ -57,9 +57,9 @@ rsync -auzhPq /running/lnd/lnd.conf /backup1/lnd/lnd.conf
 rsync -auzhPq /running/lnd/lnd.conf /backup2/lnd/lnd.conf
 rsync -auzhPq /running/lnd/lnd.conf /backup3/lnd/lnd.conf
 
-rsync -auzhPq /running/lnd2/lnd.conf /backup1/lnd2/lnd.conf
-rsync -auzhPq /running/lnd2/lnd.conf /backup2/lnd2/lnd.conf
-rsync -auzhPq /running/lnd2/lnd.conf /backup3/lnd2/lnd.conf
+# rsync -auzhPq /running/lnd2/lnd.conf /backup1/lnd2/lnd.conf
+# rsync -auzhPq /running/lnd2/lnd.conf /backup2/lnd2/lnd.conf
+# rsync -auzhPq /running/lnd2/lnd.conf /backup3/lnd2/lnd.conf
 
 rsync -auzhPq /running/bitcoin/bitcoin.conf /backup1/bitcoin/bitcoin.conf
 rsync -auzhPq /running/bitcoin/bitcoin.conf /backup2/bitcoin/bitcoin.conf

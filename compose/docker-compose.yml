@@ -153,6 +153,7 @@ services:
   #   volumes:
   #     - ${PG_BACKUP}:/running/database:ro
   #     - ${BITCOIN_DATA}:/running/bitcoin:ro
+  #     - ${LIT_DATA}:/running/lit:ro
   #     - ${STATIC}:/running/static:ro
   #     - ${BU_DIR1}:/backup1
   #     - ${BU_DIR2}:/backup2

@@ -27,7 +27,7 @@ services:
       - ${BITCOIN_CONF:?}:${GUEST_BITCOIN:?}/bitcoin.conf
 
   daphne:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     container_name: daphne${SUFFIX}
     restart: always
     network_mode: service:tor
@@ -48,7 +48,7 @@ services:
     network_mode: service:tor
 
   robosats:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     container_name: rs${SUFFIX}
     restart: always
     environment:
@@ -85,7 +85,7 @@ services:
     network_mode: service:tor
 
   clean-orders:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     restart: always
     container_name: clord${SUFFIX}
     command: python3 manage.py clean_orders
@@ -96,7 +96,7 @@ services:
     network_mode: service:tor
 
   follow-invoices:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     container_name: invo${SUFFIX}
     restart: always
     env_file:
@@ -107,7 +107,7 @@ services:
     network_mode: service:tor
 
   telegram-watcher:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     container_name: tg${SUFFIX}
     restart: always
     environment:
@@ -118,7 +118,7 @@ services:
     network_mode: service:tor
 
   celery:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     container_name: cele${SUFFIX}
     restart: always
     env_file:
@@ -131,7 +131,7 @@ services:
     network_mode: service:tor
 
   celery-beat:                                 
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.5.4-alpha@sha256:6cff144c8943f2bbe24186258055019ccc3fe21b6ddf9423a04d99aa5dabe79c}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
     container_name: beat${SUFFIX}
     restart: always
     env_file:

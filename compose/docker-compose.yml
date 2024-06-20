@@ -151,7 +151,7 @@ services:
   #   environment:
   #     NETWORK: ${NETWORK}
   #   volumes:
-  #     - ${PG_BACKUP}:/running/database:ro
+  #     - ${DATABASE}:/running/database:ro
   #     - ${BITCOIN_DATA}:/running/bitcoin:ro
   #     - ${STATIC}:/running/static:ro
   #     - ${BU_DIR1}:/backup1

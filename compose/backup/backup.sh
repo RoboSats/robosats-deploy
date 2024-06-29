@@ -48,12 +48,12 @@ rsync -auzhPq /running/bitcoin/bitcoin.conf /backup1/bitcoin/bitcoin.conf
 rsync -auzhPq /running/bitcoin/bitcoin.conf /backup2/bitcoin/bitcoin.conf
 rsync -auzhPq /running/bitcoin/bitcoin.conf /backup3/bitcoin/bitcoin.conf
 
-rsync -auzhPq /running/lit/* /backup1/lit/
-rsync -auzhPq /running/lit/* /backup2/lit/
-rsync -auzhPq /running/lit/* /backup3/lit/
+rsync -auzhPq /running/lit/ /backup1/lit/
+rsync -auzhPq /running/lit/ /backup2/lit/
+rsync -auzhPq /running/lit/ /backup3/lit/
 
 
 echo "## backing up database ##"
-rsync -auzhP /running/database/* /backup1/database/
-rsync -auzhP /running/database/* /backup2/database/
-rsync -auzhP /running/database/* /backup3/database/
+rsync -auzhP /running/database/ /backup1/database/
+rsync -auzhP /running/database/ /backup2/database/
+rsync -auzhP /running/database/ /backup3/database/

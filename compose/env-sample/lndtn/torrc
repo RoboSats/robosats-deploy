@@ -15,3 +15,12 @@ CookieAuthFile /var/lib/tor/control_auth_cookie
 HiddenServiceDir /var/lib/tor/robotest/
 HiddenServiceVersion 3
 HiddenServicePort 80 127.0.0.1:80
+
+# Robosats Admin Testnet Onion Service
+HiddenServiceDir /var/lib/tor/robo-thunderhub/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:3000
+
+HiddenServiceDir /var/lib/tor/robo-lit/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:8443

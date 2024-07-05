@@ -21,7 +21,8 @@ data:
   I2P_LONG: ''
   INVOICE_AND_ESCROW_DURATION: "30"
   LND_DIR: '/lnd/'
-  LND_GRPC_HOST: 'lnd:10009'
+  LND_GRPC_HOST: 'lnd'
+  LND_GRPC_PORT: '10009'
   LOCAL_ALIAS: '127.0.0.1'
   MACAROON_PATH: 'data/chain/bitcoin/testnet/admin.macaroon'
   MAKER_FEE_SPLIT: "0.125"
@@ -51,7 +52,9 @@ data:
   POSTGRES_HOST: 'postgres'
   POSTGRES_PORT: '5432'
   PROPORTIONAL_ROUTING_FEE_LIMIT: "0.001"
-  REDIS_URL: 'redis://redis:6379/1'
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_DB_NUMBER: "1"
   RETRY_TIME: "1"
   REWARD_TIP: "100"
   REWARDS_TIMEOUT_SECONDS: "30"

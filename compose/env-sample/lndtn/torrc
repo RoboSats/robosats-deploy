@@ -17,6 +17,10 @@ HiddenServiceVersion 3
 HiddenServicePort 80 127.0.0.1:80
 
 # Robosats Admin Testnet Onion Service
+HiddenServiceDir /var/lib/tor/satstralia-admin/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:80
+
 HiddenServiceDir /var/lib/tor/robotest-thunderhub/
 HiddenServiceVersion 3
 HiddenServicePort 80 127.0.0.1:3000

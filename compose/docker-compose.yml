@@ -149,14 +149,16 @@ services:
     container_name: bu${SUFFIX}
     restart: always
     environment:
-     NETWORK: ${NETWORK}
+      NETWORK: ${NETWORK}
     volumes:
-     - ${PG_BACKUP}:/running/database:ro
-     - ${BITCOIN_DATA}:/running/bitcoin:ro
-     - ${STATIC}:/running/static:ro
-     - ${BU_DIR1}:/backup1
-     - ${BU_DIR2}:/backup2 
-     - ${BU_DIR3}:/backup3
-
+      - ${DATABASE}:/running/database:ro
+      - ${BITCOIN_DATA}:/running/bitcoin:ro
+      - ${LND_DATA}:/running/lnd:ro
+      - ${LIT_DATA}:/running/lit:ro
+      - ${STATIC}:/running/static:ro
+      - ${BU_DIR1}:/backup1
+      - ${BU_DIR2}:/backup2
+      - ${BU_DIR3}:/backup3
+      
 volumes:
   redisdata:

@@ -149,7 +149,7 @@ services:
     restart: always
     volumes:
       - ./strfry/sync.sh:/app/sync.sh
-      - ${STRFRY_CONF}:/app/strfry.conf
+      - ${STRFRY_CONF}:/etc/strfry.conf
       - ${STRFRY_DATA}/db:/app/strfry-db
       - ${STRFRY_DATA}/log/:/var/log/
     network_mode: service:tor

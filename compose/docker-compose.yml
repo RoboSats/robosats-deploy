@@ -148,10 +148,10 @@ services:
     container_name: strfry${SUFFIX}
     restart: always
     volumes:
-      - ${STRFRY_SYNC}:/app/sync.sh
-      - ${STRFRY_CONF}:/etc/strfry.conf
-      - ${STRFRY_DATA}/db:/app/strfry-db
-      - ${STRFRY_DATA}/log/:/var/log/
+      - ${STRFRY_SYNC}:/app/sync.sh:ro
+      - ${STRFRY_CONF}:/etc/strfry.conf:ro
+      - ${STRFRY_DATA}/db:/app/strfry-db:rw
+      - ${STRFRY_DATA}/log/:/var/log:rw
     network_mode: service:tor
 
 # Example simple backup service (copy/paste to attached storage locations)

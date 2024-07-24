@@ -148,7 +148,7 @@ services:
     container_name: strfry${SUFFIX}
     restart: always
     volumes:
-      - ./strfry/sync.sh:/app/sync.sh
+      - ${STRFRY_SYNC}:/app/sync.sh
       - ${STRFRY_CONF}:/etc/strfry.conf
       - ${STRFRY_DATA}/db:/app/strfry-db
       - ${STRFRY_DATA}/log/:/var/log/

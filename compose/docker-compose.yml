@@ -143,6 +143,17 @@ services:
       - redis
     network_mode: service:tor
 
+  strfry:
+    build: ./strfry
+    container_name: strfry${SUFFIX}
+    restart: always
+    volumes:
+      - ./strfry/sync.sh:/app/sync.sh
+      - ${STRFRY_CONF}:/app/strfry.conf
+      - ${STRFRY_DATA}/db:/app/strfry-db
+      - ${STRFRY_DATA}/log/:/var/log/
+    network_mode: service:tor
+
 # Example simple backup service (copy/paste to attached storage locations)
   backup:
     build: ./backup

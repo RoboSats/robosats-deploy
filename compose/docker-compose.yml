@@ -166,9 +166,9 @@ services:
       - ${LND_DATA}:/running/lnd:ro
       - ${LIT_DATA}:/running/lit:ro
       - ${STATIC}:/running/static:ro
-      - ${BU_DIR1}:/backup1
-      - ${BU_DIR2}:/backup2
-      - ${BU_DIR3}:/backup3
+      - ${BU_DIR1}:/backup1:rw
+      - ${BU_DIR2}:/backup2:rw
+      - ${BU_DIR3}:/backup3:rw
       
 volumes:
   redisdata:

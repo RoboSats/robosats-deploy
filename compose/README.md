@@ -244,9 +244,10 @@ LND_DATA=/umbrel-path-location/app-data/lightning/data/lnd/
 ```
 
 2. **Set LND gRPC Host**:  
-Update the `LND_GRPC_HOST` variable to your specific gRPC host and port in robosats.env. Typically this is done as below:
+Update the `LND_GRPC_HOST` and `LND_GRPC_PORT` variables to your specific gRPC host and port in robosats.env. Typically this is done as below:
 ```env
-LND_GRPC_HOST=10.21.21.9:10009
+LND_GRPC_HOST=10.21.21.9
+LND_GRPC_PORT=10009
 ```
 
 

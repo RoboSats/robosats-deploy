@@ -47,10 +47,10 @@ services:
       - ${LIT_DATA:?}:/root/
 
 # Patch common services
-  tor:
-    ports:
-      - ${THUB_LOCAL_PORT}:3000
-      - ${LIT_LOCAL_PORT}:8443
+#  tor:
+    #    ports:
+      #      - ${THUB_LOCAL_PORT}:3000
+        #      - ${LIT_LOCAL_PORT}:8443
   robosats:
     volumes:
       - ${LND_DATA}:/lnd

@@ -8,7 +8,7 @@ const sqlite3 = require("sqlite3").verbose();
 const dbConfig = {
   user: "postgres",
   host: "localhost",
-  database: "your_db_name",  // Change to your actual database name
+  database: "postgres",  // Change to your actual database name
   password: "postgres",
   port: 5432,
 };

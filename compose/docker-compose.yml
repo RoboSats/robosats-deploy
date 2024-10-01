@@ -152,6 +152,21 @@ services:
       - ${STRFRY_CONF}:/etc/strfry.conf:ro
       - ${STRFRY_DATA}/db:/app/strfry-db:rw
     network_mode: service:tor
+    
+  simplex:
+    build: ./simplex
+    command: >
+      bash -c "
+      simplex-chat -p 5225 -d /simplex_database/test_db & 
+      sleep 5; 
+      cd /app/simplex-chat/packages/simplex-chat-client/typescript/bot/;
+      node simplex_bot.js"
+    container_name: simplex${SUFFIX}
+    volumes:
+      - ${SIMPLEX_DB}:/simplex_database
+      - ${SIMPLEX_BOT}:/app/simplex-chat/packages/simplex-chat-client/typescript/bot/
+    network_mode: service:tor
+
 
 # Example simple backup service (copy/paste to attached storage locations)
   # backup:

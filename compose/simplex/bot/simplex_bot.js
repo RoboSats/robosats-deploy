@@ -6,10 +6,10 @@ const sqlite3 = require("sqlite3").verbose();
 
 // Define PostgreSQL connection details at the top of the script
 const dbConfig = {
-  user: "postgres",
+  user: "postgres", // Change to your actual user
   host: "localhost",
   database: "postgres",  // Change to your actual database name
-  password: "postgres",
+  password: "postgres", // Change to your actual pass
   port: 5432,
 };
 

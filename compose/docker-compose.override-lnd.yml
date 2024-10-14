@@ -45,6 +45,22 @@ services:
     volumes:
       - ${LND_DATA:?}:/lnd/:ro
       - ${LIT_DATA:?}:/root/
+  
+  lndg:
+    build: ./lndg
+    restart: always
+    container_name: lndg${SUFFIX}
+    volumes:
+      - ${LNDG_CONF}:/root/.lnd:ro
+      - ${LNDG_DATA}:/lndg/data:rw
+    depends_on:
+      - tor
+      - lnd
+    command:
+      - sh
+      - -c
+      - python initialize.py -net 'mainnet' -server '127.0.0.1:10009' -d && supervisord && python manage.py runserver 0.0.0.0:8889
+    network_mode: service:tor
 
 # Patch common services
 #  tor:

@@ -28,3 +28,7 @@ HiddenServicePort 80 127.0.0.1:3000
 HiddenServiceDir /var/lib/tor/robotest-lit/
 HiddenServiceVersion 3
 HiddenServicePort 8443 127.0.0.1:8443
+
+HiddenServiceDir /var/lib/tor/robotest-lndg/
+HiddenServiceVersion 3
+HiddenServicePort 8889 127.0.0.1:8889

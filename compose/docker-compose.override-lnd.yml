@@ -60,7 +60,7 @@ services:
     command:
       - sh
       - -c
-      - python initialize.py -net ${NETWORK} -wn -dir /root/.lnd -rpc 127.0.0.1:${GUEST_LND_RPC_PORT:?} -pw ${LNDG_PASSWORD:?} --supervisord && python controller.py runserver 0.0.0.0:8889
+      - python initialize.py -net ${NETWORK} -wn -dir /root/.lnd -rpc 127.0.0.1:${GUEST_LND_RPC_PORT:?} -pw ${LNDG_PASSWORD:?} && python controller.py runserver 0.0.0.0:8889
     network_mode: service:tor
 
 # Patch common services

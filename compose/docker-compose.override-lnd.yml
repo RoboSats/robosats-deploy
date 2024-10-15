@@ -60,7 +60,7 @@ services:
     command:
       - sh
       - -c
-      - python initialize.py -net ${NETWORK} -wn -dir /root/.lnd -rpc 127.0.0.1:${GUEST_LND_RPC_PORT:?} -pw ${LNDG_PASSWORD:?} && python controller.py runserver 0.0.0.0:8889
+      - python initialize.py -net ${NETWORK} -wn -dir /root/.lnd -rpc 127.0.0.1:${GUEST_LND_RPC_PORT:?} -pw ${LNDG_PASSWORD:?} && python manage.py runserver 0.0.0.0:8889 > /var/log/lndg-manage.log 2>&1 & tail -f /var/log/lndg-manage.log
     network_mode: service:tor
 
 # Patch common services

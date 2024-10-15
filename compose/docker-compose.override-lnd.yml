@@ -51,6 +51,7 @@ services:
     restart: always
     container_name: lndg${SUFFIX}
     volumes:
+      - ${LND_CONFIG}:/root/supervisord.conf:ro
       - ${LND_DATA}:/root/.lnd:ro
       - ${LNDG_DATA}:/lndg/data:rw
     depends_on:
@@ -59,7 +60,7 @@ services:
     command:
       - sh
       - -c
-      - python initialize.py -net ${NETWORK} -dir /root/.lnd -rpc 127.0.0.1:${GUEST_LND_RPC_PORT:?} -u ${LNDG_USER:?} -pw ${LNDG_PASSWORD:?} -d && supervisord && python manage.py runserver 0.0.0.0:8889
+      - python initialize.py -net ${NETWORK} -dir /root/.lnd -rpc 127.0.0.1:${GUEST_LND_RPC_PORT:?} -u ${LNDG_USER:?} -pw ${LNDG_PASSWORD:?} -d && supervisord -c /root/supervisord.conf && python manage.py runserver 0.0.0.0:8889
     network_mode: service:tor
 
 # Patch common services

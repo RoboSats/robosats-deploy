@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM python:3-alpine
 ENV TZ=Europe/London
 ENV PYTHONUNBUFFERED 1
 

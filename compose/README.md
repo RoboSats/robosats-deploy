@@ -82,7 +82,7 @@ cp -r env-sample env
 Then edit and make sure the paths and configurations are right.
 ```
 nano env/{namespace}/compose...env
-nano env/{namespace}/crobosats...env
+nano env/{namespace}/robosats...env
 nano env/{namespace}/lnd.conf
 ...
 ```

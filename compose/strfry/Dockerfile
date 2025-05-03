@@ -7,7 +7,7 @@ RUN apt update && apt install -y --no-install-recommends \
     libsecp256k1-dev libzstd-dev
 
 # setup app
-RUN git clone --branch 1.0.4 --single-branch https://github.com/hoytech/strfry /app
+RUN git clone https://github.com/KoalaSat/strfry /app
 
 WORKDIR /app
 
@@ -37,7 +37,5 @@ RUN chmod +x /etc/strfry/sync.sh
 
 #Setting up logs
 RUN touch /var/log/cron.log && chmod 0644 /var/log/cron.log
-
-COPY . /app
 
 ENTRYPOINT ["/etc/strfry/entrypoint.sh"]

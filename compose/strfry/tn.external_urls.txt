@@ -1,0 +1,5 @@
+wss://nostr.satstralia.com
+wss://freelay.sovbit.host
+wss://nostrvista.aaroniumii.com
+wss://relay.damus.io
+wss://relay.mostro.network

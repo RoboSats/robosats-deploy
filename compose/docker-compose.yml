@@ -148,7 +148,8 @@ services:
     container_name: strfry${SUFFIX}
     restart: always
     volumes:
-      - ${STRFRY_URLS}:/app/onion_urls.txt:ro
+      - ${STRFRY_URL_FILE}/external_urls.txt:/app/external_urls.txt:ro
+      - ${STRFRY_URL_FILE}/federation_urls.txt:/app/federation_urls.txt:ro
       - ${STRFRY_CONF}:/etc/strfry.conf:ro
       - ${STRFRY_DATA}/db:/app/strfry-db:rw
     network_mode: service:tor

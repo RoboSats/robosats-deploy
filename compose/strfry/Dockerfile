@@ -38,4 +38,6 @@ RUN chmod +x /etc/strfry/sync.sh
 #Setting up logs
 RUN touch /var/log/cron.log && chmod 0644 /var/log/cron.log
 
+COPY . /app
+
 ENTRYPOINT ["/etc/strfry/entrypoint.sh"]

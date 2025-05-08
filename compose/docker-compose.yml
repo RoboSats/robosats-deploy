@@ -146,7 +146,7 @@ services:
   strfry:
     build:
       context: ./strfry
-      dockerfile: old.Dockerfile
+      dockerfile: Dockerfile
     container_name: strfry${SUFFIX}
     restart: always
     volumes:

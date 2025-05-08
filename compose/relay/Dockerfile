@@ -7,7 +7,7 @@ RUN apt update && apt install -y --no-install-recommends \
     libsecp256k1-dev libzstd-dev
 
 # setup app
-RUN git clone https://github.com/KoalaSat/strfry /app
+RUN git clone --branch 1.0.4 --single-branch https://github.com/hoytech/strfry /app
 
 WORKDIR /app
 

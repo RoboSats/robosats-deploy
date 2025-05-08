@@ -144,7 +144,9 @@ services:
     network_mode: service:tor
 
   strfry:
-    build: ./strfry
+    build:
+      context: ./strfry
+      dockerfile: old.Dockerfile
     container_name: strfry${SUFFIX}
     restart: always
     volumes:
@@ -152,6 +154,19 @@ services:
       - ${STRFRY_URLS_FEDERATION}:/app/federation_urls.txt:ro
       - ${STRFRY_CONF}:/etc/strfry.conf:ro
       - ${STRFRY_DATA}/db:/app/strfry-db:rw
+    network_mode: service:tor
+
+  relay:
+    build:
+      context: ./relay
+      dockerfile: Dockerfile
+    container_name: relay${SUFFIX}
+    restart: always
+    volumes:
+      - ${RELAY_URLS_EXTERNAL}:/app/external_urls.txt:ro
+      - ${RELAY_URLS_FEDERATION}:/app/federation_urls.txt:ro
+      - ${RELAY_CONF}:/etc/strfry.conf:ro
+      - ${RELAY_DATA}/db:/app/strfry-db:rw
     network_mode: service:tor
 
 # Example simple backup service (copy/paste to attached storage locations)

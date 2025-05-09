@@ -64,10 +64,10 @@ services:
     network_mode: service:tor
 
 # Patch common services
-  tor:
-    ports:
-      - ${THUB_LOCAL_PORT}:3000
-      - ${LIT_LOCAL_PORT}:8443
+#  tor:
+    #    ports:
+      #      - ${THUB_LOCAL_PORT}:3000
+        #      - ${LIT_LOCAL_PORT}:8443
   robosats:
     volumes:
       - ${LND_DATA}:/lnd
@@ -80,10 +80,10 @@ services:
   celery:
     volumes:
       - ${LND_DATA}:/lnd
-  # backup:
-  #   volumes:
-  #     - ${LND_DATA}:/running/lnd:ro
-  #     - ${LIT_DATA}:/running/lit:ro
+  backup:
+    volumes:
+      - ${LND_DATA}:/running/lnd:ro
+      - ${LIT_DATA}:/running/lit:ro
 
 # Other LND services you might want to enable
 

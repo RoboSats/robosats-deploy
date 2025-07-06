@@ -1,3 +1,0 @@
-wss://nostr.satstralia.com
-wss://relay.damus.io
-wss://freelay.sovbit.host

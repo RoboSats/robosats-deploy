@@ -66,6 +66,8 @@ And restart Docker service
 service docker restart
 `
 
+When Docker pulls images from DockerHub it might overpass proxies and download it directly from clearnet. You should configure `/etc/systemd/system/docker.service.d/http-proxy.conf` on your machine if you want to force Docker and its containers to always use Tor.
+
 ## Clone and configure RoboSats deploy
 
 Clone this repo

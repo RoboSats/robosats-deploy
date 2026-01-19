@@ -1,0 +1,45 @@
+# Blossom Server Configuration for RoboSats
+
+publicDomain: ""
+
+databasePath: data/sqlite.db
+
+dashboard:
+  enabled: false
+  username: "admin"
+
+# Storage config
+storage:
+  backend: "local"
+  removeWhenNoOwners: false
+  local:
+    dir: "./data/blobs"
+
+  # keep encrypted images for 30 days
+  rules:
+    - type: "application/octet-stream" # no recognizable type
+      expiration: "30 days"
+    - type: "*"
+      expiration: "30 days"
+
+# (BUD-02)
+upload:
+  enabled: true
+  requireAuth: true # BUD-01/02 Nostr auth
+  requirePubkeyInRule: false
+
+# No need for media optimization
+media:
+  enabled: false
+  requireAuth: true
+  requirePubkeyInRule: false
+
+# (BUD-04) - disabled for privacy 
+list:
+  requireAuth: true
+  allowListOthers: false
+
+# already behind Tor via service:tor
+tor:
+  enabled: false
+  proxy: ""

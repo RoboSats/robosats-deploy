@@ -144,7 +144,7 @@ services:
     network_mode: service:tor
 
   blossom:
-    image: ghcr.io/hzrd149/blossom-server:master
+    image: ghcr.io/hzrd149/blossom-server:master@sha256:bafb705a42431ad55d2d7c23e3cd8ce61f735b8d1096f134b31b5b166f7ffa28
     container_name: blossom${SUFFIX}
     restart: always
     environment:

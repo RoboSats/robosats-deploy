@@ -90,12 +90,16 @@ nano env/{namespace}/lnd.conf
 ```
 If you were already running `robosats-deploy/compose` in another machine and need to recover, simply bring your existing environmental files from your backup. 
 
-In `/compose/env/compose...env` there is a variable named `SUFFIX` . This one is used to suffix all of your containers and configuration files. For example if you use `-tn` (for testnet), your bitcoind service will be called `btc-tn`, this is an effective way of creating namespaces. The example configuration in `/compose/env-sample/` uses the prefix `-lndtn`, for a LND testnet coordinator. This way, it is easy to run several coordinator orchestration in the same machine. For example, you can use the `-lndmn` prefix for a LND mainnet coordinator configuration or `-clntn` for a CLN Testnet configuration. You can also create alias shortcuts for each of your orchestration.
+In `/compose/env/compose...env` there is a variable named `SUFFIX` . This one is used to suffix all of your containers and configuration files. For example if you use `-tn` (for testnet), your bitcoind service will be called `btc-tn`, this is an effective way of creating namespaces. The example configuration in `/compose/env-sample/` includes:
+- `-lndtn` and `-clntn` for testnet3
+- `-lndtn4` and `-clntn4` for testnet4
+- `-lndmn` for mainnet
+This way, it is easy to run several coordinator orchestrations on the same machine. You can also create alias shortcuts for each orchestration.
 
 ## Use aliases
 Docker commands are lengthy. You can use aliases to make your task of operating a docker compose based robosats coordinator easier. Take a look at `/compose/aliases.sh` for some useful aliases and shortcuts.
 
-## Example commands for a lnd testnet orchestration (-lndtn containers)
+## Example commands for a lnd testnet3 orchestration (-lndtn containers)
 If you install the aliases you can run the following shortcut commands:
 
 ```
@@ -129,6 +133,8 @@ Unlock or 'create' the lnd node
 Create p2wkh addresses
 
 `tn-lncli newaddress p2wkh` (note without alias this command would be ``docker exec -it lnd-lndtn lncli --network=testnet newaddress p2wkh``)
+
+For testnet4 orchestration samples (`lndtn4`/`clntn4`), use `--network=testnet4` in direct `lncli` commands.
 
 Wallet balance
 

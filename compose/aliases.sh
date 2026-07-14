@@ -56,3 +56,20 @@ alias tn-manage="docker exec -it rs-lndtn python3 manage.py"
 # Example postgresql dump and restore. Unsafe!
 alias tn-pg-restore='docker exec -i sql-lndtn /bin/bash -c "PGPASSWORD=robotest psql --username postgres postgres" < /home/$(whoami)/backup/testnet/database/backup.sql'
 alias tn-pg-backup='docker exec -i sql-lndtn /bin/bash -c "PGPASSWORD=robotest pg_dump --username postgres postgres" > /home/$(whoami)/backup/testnet/database/backup.sql'
+
+#################################################################################################################
+## ROBOTEST4 Docker-Compose (same aliases as above, but for a testnet4 `lndtn4` orchestration)
+
+alias tn4="docker compose -p lndtest4 --env-file  /home/$(whoami)/robosats-deploy/compose/env/lndtn4/compose.env -f /home/$(whoami)/robosats-deploy/compose/docker-compose.yml -f /home/$(whoami)/robosats-deploy/compose/docker-compose.override-lnd.yml"
+
+## Once ROBOTEST4 is up!
+# ROBOTEST4 LNCLI COMANDS
+alias tn4-lncli="docker exec -it lnd-lndtn4 lncli --network=testnet4"
+
+# DJANGO MANAGE
+alias tn4-manage="docker exec -it rs-lndtn4 python3 manage.py"
+
+# POSTGRESS
+# Example postgresql dump and restore. Unsafe!
+alias tn4-pg-restore='docker exec -i sql-lndtn4 /bin/bash -c "PGPASSWORD=robotest psql --username postgres postgres" < /home/$(whoami)/backup/testnet4/database/backup.sql'
+alias tn4-pg-backup='docker exec -i sql-lndtn4 /bin/bash -c "PGPASSWORD=robotest pg_dump --username postgres postgres" > /home/$(whoami)/backup/testnet4/database/backup.sql'

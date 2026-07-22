@@ -114,7 +114,6 @@ tn-manage createsuperuser # `tn-manage` is the alias for `docker exec -it rs-lnd
 ```
 docker compose -p lndtest --env-file env/stack-lndtn.env build
 docker compose -p lndtest --env-file env/stack-lndtn.env up -d
-docker exec -it rs-lndtn cp -R frontend/static/frontend /usr/src/static
 docker exec -it rs-lndtn python3 manage.py createsuperuser
 docker compose -p lndtest --env-file env/stack-lndtn.env restart
 ```

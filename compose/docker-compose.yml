@@ -27,14 +27,12 @@ services:
       - ${BITCOIN_CONF:?}:${GUEST_BITCOIN:?}/bitcoin.conf
 
   daphne:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     container_name: daphne${SUFFIX}
     restart: always
     network_mode: service:tor
     env_file:
       - ${ROBOSATS_ENVS_FILE}
-    environment:
-      SKIP_COLLECT_STATIC: "true"
     depends_on:
       - robosats
     command: daphne -b 0.0.0.0 -p 9000 robosats.asgi:application
@@ -48,7 +46,7 @@ services:
     network_mode: service:tor
 
   robosats:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     container_name: rs${SUFFIX}
     restart: always
     environment:
@@ -57,8 +55,6 @@ services:
       - ${ROBOSATS_ENVS_FILE}
     depends_on:
       - redis
-    volumes:
-      - ${STATIC}:/usr/src/static
     network_mode: service:tor
     command: gunicorn --bind :8000 --max-requests 1000 --max-requests-jitter 200 -w ${GUNICORN_WORKERS} robosats.wsgi:application
 
@@ -75,69 +71,58 @@ services:
       - ${DATABASE}:/var/lib/postgresql/data
 
   nginx:
-    image: nginx:${NGINX_TAG:-1.25.2-alpine-slim@sha256:1b0cb433e90260a96528c987ee78b797e842d510473935304a0931536d10f50d}
+    build: ./nginx
     container_name: nginx${SUFFIX}
     restart: always
     volumes:
-      - ${STATIC}:/usr/src/static:ro
       - ${NGINX_CONFD}:/etc/nginx/conf.d:ro
       - ${WELLKNOWN}:/usr/src/.well-known:ro
     network_mode: service:tor
 
   clean-orders:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     restart: always
     container_name: clord${SUFFIX}
     command: python3 manage.py clean_orders
-    environment:
-      SKIP_COLLECT_STATIC: "true"
     env_file:
       - ${ROBOSATS_ENVS_FILE}
     network_mode: service:tor
 
   follow-invoices:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     container_name: invo${SUFFIX}
     restart: always
     env_file:
       - ${ROBOSATS_ENVS_FILE}
-    environment:
-      SKIP_COLLECT_STATIC: "true"
     command: python3 manage.py follow_invoices
     network_mode: service:tor
 
   telegram-watcher:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     container_name: tg${SUFFIX}
     restart: always
-    environment:
-      SKIP_COLLECT_STATIC: "true"
     env_file:
       - ${ROBOSATS_ENVS_FILE}
     command: python3 manage.py telegram_watcher
     network_mode: service:tor
 
   celery:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     container_name: cele${SUFFIX}
     restart: always
     env_file:
       - ${ROBOSATS_ENVS_FILE}
-    environment:
-      SKIP_COLLECT_STATIC: "true"
     command: celery -A robosats worker --loglevel=WARNING
     depends_on:
       - redis
     network_mode: service:tor
 
   celery-beat:
-    image: recksato/robosats:${ROBOSATS_TAG:-v0.6.0-alpha@sha256:8cc975ff5942a3fb2a09827b8eaafebea1c851eb3ecf9be1aaac1f238cfa9fc1}
+    image: recksato/robosats:${ROBOSATS_TAG:-v0.8.4-alpha@sha256:e47f1225260d2508d4501af237714574dd467da4f735b6dce19d88bab41e744f}
     container_name: beat${SUFFIX}
     restart: always
     env_file:
       - ${ROBOSATS_ENVS_FILE}
-    environment:
-      SKIP_COLLECT_STATIC: "true"
     command: celery -A robosats beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     depends_on:
       - redis
@@ -180,7 +165,6 @@ services:
       - ${LND_DATA}:/running/lnd:ro
       - ${LND_CONF}:/running/lnd/lnd.conf:ro
       - ${LIT_DATA}:/running/lit:ro
-      - ${STATIC}:/running/static:ro
       - ${BU_DIR1}:/backup1:rw
       - ${BU_DIR2}:/backup2:rw
       - ${BU_DIR3}:/backup3:rw

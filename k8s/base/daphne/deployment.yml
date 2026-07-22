@@ -38,14 +38,9 @@ spec:
           ports:
             - containerPort: 9000
           volumeMounts:
-            - name: static-data
-              mountPath: /usr/src/static
             - name: lnd-data
               mountPath: /lnd
       volumes:
-        - name: static-data
-          persistentVolumeClaim:
-            claimName: static-pvc
         - name: lnd-data
           persistentVolumeClaim:
             claimName: lnd-pvc          

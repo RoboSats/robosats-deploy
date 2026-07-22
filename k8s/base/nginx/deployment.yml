@@ -29,8 +29,6 @@ spec:
               cpu: "1m"
               memory: "5Mi"
           volumeMounts:
-            - name: static-data
-              mountPath: /usr/src/static
               readOnly: true
             - name: nginx-conf
               mountPath: /etc/nginx/conf.d/local.conf
@@ -38,10 +36,6 @@ spec:
             - name: nginx-conf
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
-      volumes:
-        - name: static-data
-          persistentVolumeClaim:
-            claimName: static-pvc
         - name: nginx-conf
           configMap:
             name: nginx-configmap

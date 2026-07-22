@@ -33,7 +33,6 @@ resources:
   - celery/worker-deployment.yml
   - celery/beat-deployment.yml
   # Nginx
-  - nginx/static-pvc.yml
   - nginx/configmap.yml
   - nginx/service.yml
   - nginx/deployment.yml

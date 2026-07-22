@@ -144,7 +144,6 @@ kubectl exec -it -n testnet <gunicorn-pod-number> -- bash
 python3 manage.py makemigrations control api chat
 python3 manage.py migrate
 python3 manage.py createsuperuser
-python3 manage.py collectstatic
 ```
 
 Warning django webserver will start up faster than postgres. Needs to be staged.

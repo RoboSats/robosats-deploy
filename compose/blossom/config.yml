@@ -28,6 +28,7 @@ upload:
   enabled: true
   requireAuth: true # BUD-01/02 Nostr auth
   requirePubkeyInRule: false
+  maxSize: 10485760 # 10 MB
 
 # No need for media optimization (BUD-05)
 media:

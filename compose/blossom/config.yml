@@ -2,7 +2,8 @@
 
 publicDomain: ""
 
-databasePath: data/sqlite.db
+database:
+  path: data/sqlite.db
 
 dashboard:
   enabled: false
@@ -22,24 +23,20 @@ storage:
     - type: "*"
       expiration: "30 days"
 
-# (BUD-02)
+# (BUD-02) upload
 upload:
   enabled: true
   requireAuth: true # BUD-01/02 Nostr auth
   requirePubkeyInRule: false
+  maxSize: 10485760 # 10 MB
 
-# No need for media optimization
+# No need for media optimization (BUD-05)
 media:
   enabled: false
   requireAuth: true
-  requirePubkeyInRule: false
 
-# (BUD-04) - disabled for privacy 
+# (BUD-04) list — disabled for privacy
 list:
+  enabled: false
   requireAuth: true
   allowListOthers: false
-
-# already behind Tor via service:tor
-tor:
-  enabled: false
-  proxy: ""

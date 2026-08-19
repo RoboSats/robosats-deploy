@@ -122,28 +122,57 @@ All vhosts set:
 
 ## Monitoring PoW metrics
 
-Enable `MetricsPort` in torrc (already in the sample configs):
+`MetricsPort` exposes a plain **Prometheus text format** HTTP endpoint bound
+to `127.0.0.1:9035` inside the `tor` container.
 
-```
-MetricsPort 127.0.0.1:9035
-MetricsPortPolicy accept 127.0.0.1
-```
+### How to reach it
 
-Read metrics:
+All containers in the stack share the `tor` network namespace
+(`network_mode: service:tor`), so the metrics port is reachable from the
+**host machine** as well as from any container in the stack.
+
 ```sh
+# From the host (or any container in the stack):
 curl -s http://127.0.0.1:9035/metrics | grep -E "tor_hs_pow|tor_hs_rdv"
 ```
 
-Key gauges:
+Alternatively, exec into the tor container directly:
+```sh
+# Compose alias (testnet example):
+docker exec -it tor-lndtn wget -qO- http://127.0.0.1:9035/metrics | grep tor_hs_pow
+```
+
+### What the output looks like
+
+```
+# HELP tor_hs_pow_suggested_effort Suggested effort for requests with a proof of work client puzzle
+# TYPE tor_hs_pow_suggested_effort gauge
+tor_hs_pow_suggested_effort 0
+# HELP tor_hs_rdv_pow_pqueue_count Number of requests waiting in the proof of work priority queue
+# TYPE tor_hs_rdv_pow_pqueue_count gauge
+tor_hs_rdv_pow_pqueue_count 0
+```
+
+When idle (no attack), both values are **0**.  Under a DoS attack:
+- `tor_hs_pow_suggested_effort` climbs from 0 up toward 10000 — this is the
+  CPU puzzle difficulty published in your service descriptor.  Clients with
+  recent Tor Browser automatically solve it; older clients or bots that skip
+  it get deprioritised.
+- `tor_hs_rdv_pow_pqueue_count` > 0 means rendezvous requests are queued.
+  If this number is large and growing, lower `HiddenServicePoWQueueRate`.
+
+### Key gauges
 
 | Metric | Meaning |
 |--------|---------|
-| `tor_hs_pow_suggested_effort` | Current puzzle effort suggested to clients (0 = idle) |
+| `tor_hs_pow_suggested_effort` | Current puzzle difficulty (0 = idle, ~10000 = max) |
 | `tor_hs_rdv_pow_pqueue_count` | Rendezvous requests queued waiting for dispatch |
+| `tor_hs_intro_rejected_intro_req_count` | Intro requests rejected at intro points (Layer 1 firing) |
+| `tor_hs_intro_established_count` | Number of currently established intro circuits |
 
-If `tor_hs_pow_suggested_effort` is climbing, the service is under attack and
-PoW is actively filtering.  If `tor_hs_rdv_pow_pqueue_count` is growing, lower
-`HiddenServicePoWQueueRate` to increase effort faster.
+If `tor_hs_pow_suggested_effort` is climbing, PoW is actively filtering.
+If `tor_hs_rdv_pow_pqueue_count` is growing, lower `HiddenServicePoWQueueRate`
+to raise puzzle effort faster and drain the queue more slowly.
 
 ---
 

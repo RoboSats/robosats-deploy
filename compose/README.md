@@ -157,6 +157,17 @@ Restart the containers using the following command:
 Delete <None> images
 `docker rmi $(docker images -f 'dangling=true' -q)`
 
+## DoS protection for Onion services
+
+The repo ships layered Denial-of-Service defences for every onion service:
+Tor intro-point rate limiting (Proposal 305), Proof-of-Work client puzzles
+(auto-tuned by Tor ≥ 0.4.8.1), stream limits per rendezvous circuit, and
+per-circuit nginx rate limiting via the HAProxy PROXY protocol.
+
+See **[compose/dos-mitigation.md](dos-mitigation.md)** for a full explanation
+of each layer, monitoring with `MetricsPort`, the tuning cheat-sheet, and how
+to kill abusive circuits at runtime.
+
 ## Add Onion services
 
 At the moment the RoboSats image does not use TorControl of the Tor container to automatically generate the Onion hidden service. It simply exposes the port (18000 in the `/compose/env-sample` testnet orchestration) and exposes a hidden service defined  `/env/{namespace}/torrc`.

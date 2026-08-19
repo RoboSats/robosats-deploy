@@ -10,8 +10,36 @@ data:
     # HashedControlPassword 16:B55F2A0995402608605FB7206DE0E474DF92EE2026A2FFBB1B8AC7A926 
     # CookieAuthentication 0
 
+    # ---------------------------------------------------------------------------
+    # Robosats Onion Service  (public — all DoS defenses enabled)
+    # ---------------------------------------------------------------------------
+    # NOTE: HiddenServicePort points to port 81 (PROXY-protocol nginx vhost).
     HiddenServiceDir /var/lib/tor/robosite/
-    HiddenServicePort 80 nginx:80
+    HiddenServicePort 80 nginx:81
+
+    # 1. Intro-point DoS defense (Proposal 305)
+    HiddenServiceEnableIntroDoSDefense 1
+    HiddenServiceEnableIntroDoSRatePerSec 25
+    HiddenServiceEnableIntroDoSBurstPerSec 200
+
+    # 2. Proof-of-Work rendezvous defense (requires tor >= 0.4.8.1 + --enable-gpl)
+    HiddenServicePoWDefensesEnabled 1
+    HiddenServicePoWQueueRate 250
+    HiddenServicePoWQueueBurst 2500
+
+    # 3. Stream limits per rendezvous circuit
+    HiddenServiceMaxStreams 200
+    HiddenServiceMaxStreamsCloseCircuit 1
+
+    # 4. Circuit-ID export for nginx per-circuit rate limiting
+    HiddenServiceExportCircuitID haproxy
+
+    # 5. Number of introduction points
+    HiddenServiceNumIntroductionPoints 3
+
+    # Prometheus metrics for PoW monitoring (scraped from localhost:9035/metrics)
+    MetricsPort 127.0.0.1:9035
+    MetricsPortPolicy accept 127.0.0.1
 
     # add:
     # CookieAuthFileGroupReadable 1 

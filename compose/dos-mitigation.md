@@ -202,24 +202,6 @@ See: https://community.torproject.org/onion-services/advanced/client-auth/
 
 ---
 
-## Horizontal scaling (Onionbalance)
-
-If a single coordinator is overwhelmed despite all defences, Onionbalance
-distributes requests across multiple backend instances behind one onion address:
-
-```
-onion address (published)
-       │
-  Onionbalance
-   ┌───┴────┐
-   │        │
-backend1  backend2
-```
-
-See: https://onionservices.torproject.org/apps/base/onionbalance/
-
----
-
 ## What is NOT covered here
 
 - **Django/DRF throttling** — backend-level throttle classes live in the

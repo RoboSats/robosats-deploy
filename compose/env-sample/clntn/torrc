@@ -5,8 +5,46 @@ Log notice file /var/log/tor/notices.log
 DataDirectory /var/lib/tor
 DataDirectoryGroupReadable 1
 
-## Enable ControlPort
+## Enable ControlPort (required for HiddenServiceExportCircuitID)
 ControlPort 9051
 CookieAuthentication 1
 CookieAuthFileGroupReadable 1
 CookieAuthFile /var/lib/tor/control_auth_cookie
+
+## Expose Prometheus-style metrics for PoW monitoring.
+## Metrics are only reachable from localhost; use `curl http://127.0.0.1:9035/metrics`
+## to read tor_hs_pow_suggested_effort and tor_hs_rdv_pow_pqueue_count.
+MetricsPort 127.0.0.1:9035
+MetricsPortPolicy accept 127.0.0.1
+
+# ---------------------------------------------------------------------------
+# Robosats CLN Testnet Onion Service  (public — all DoS defenses enabled)
+# ---------------------------------------------------------------------------
+# NOTE: HiddenServicePort points to port 81 instead of 80.
+#       Nginx listens on 81 with PROXY protocol enabled so that each
+#       Tor circuit gets a unique pseudo-IP for per-circuit rate limiting.
+#       The clearnet vhost stays on port 80 and is unaffected.
+# (Replace with your actual HiddenServiceDir path once configured)
+HiddenServiceDir /var/lib/tor/robocln/
+HiddenServiceVersion 3
+HiddenServicePort 80 127.0.0.1:81
+
+## 1. Intro-point DoS defense (Proposal 305)
+HiddenServiceEnableIntroDoSDefense 1
+HiddenServiceEnableIntroDoSRatePerSec 25
+HiddenServiceEnableIntroDoSBurstPerSec 200
+
+## 2. Proof-of-Work rendezvous defense (requires tor >= 0.4.8.1 + --enable-gpl)
+HiddenServicePoWDefensesEnabled 1
+HiddenServicePoWQueueRate 250
+HiddenServicePoWQueueBurst 2500
+
+## 3. Stream (connection) limits per rendezvous circuit
+HiddenServiceMaxStreams 200
+HiddenServiceMaxStreamsCloseCircuit 1
+
+## 4. Circuit-ID export for nginx per-circuit rate limiting
+HiddenServiceExportCircuitID haproxy
+
+## 5. Number of introduction points
+HiddenServiceNumIntroductionPoints 3

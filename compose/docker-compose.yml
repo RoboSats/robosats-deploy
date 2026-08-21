@@ -144,9 +144,6 @@ services:
     network_mode: service:tor
 
   blossom:
-    # IMPORTANT: blossom-server reads its port from config.yml, not from a PORT
-    # env var. The port must be set to 3006 in config.yml to match nginx.
-    # Tracking :master is a supply-chain risk; pin to a release tag when available.
     image: ghcr.io/hzrd149/blossom-server:master@sha256:a4c4b954af2d7504b105e19f845d0eb41d36651f706905a4c1ebf258c8983792
     container_name: blossom${SUFFIX}
     restart: always

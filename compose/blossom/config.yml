@@ -1,7 +1,4 @@
 # Blossom Server Configuration for RoboSats
-#
-# IMPORTANT: blossom-server reads "port" from this YAML only — the PORT env var
-# has no effect. Nginx proxies to 3006; if these diverge the result is 502.
 port: 3006
 
 # publicDomain controls the host blossom embeds in returned blob URLs.

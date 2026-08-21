@@ -32,7 +32,7 @@ storage:
   #   - ensures the prune loop cannot be tricked by MIME spoofing
   rules:
     - type: "application/octet-stream"
-      expiration: "7 days"
+      expiration: "14 days"
 
 # (BUD-02) upload
 upload:

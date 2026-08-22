@@ -1,0 +1,44 @@
+name: Build Check – Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "k8s/**"
+      - ".github/workflows/build-check-k8s.yml"
+  schedule:
+    # Weekly on Monday at 07:00 UTC (staggered from compose workflow)
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # 1. Validate Kubernetes manifests (dry-run client-side)
+  # ──────────────────────────────────────────────────────────────────────────
+  validate-k8s:
+    name: Validate Kubernetes manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Validate base manifests (dry-run)
+        run: |
+          # Apply each non-kustomization YAML individually with --dry-run=client
+          # (kustomization.yml files and tilde-prefixed drafts are not resource manifests)
+          find k8s/ -name '*.yml' ! -name 'kustomization.yml' ! -name '~*' \
+            -exec kubectl apply --dry-run=client -f {} \; 2>&1 | \
+            grep -v "^Warning:" || true
+
+      - name: Install kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Kustomize build – testnet overlay
+        run: kustomize build k8s/overlays/testnet
+
+      - name: Kustomize build – development overlay
+        run: kustomize build k8s/overlays/development

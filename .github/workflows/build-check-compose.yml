@@ -1,0 +1,197 @@
+name: Build Check – Compose
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "compose/**"
+      - ".github/workflows/build-check-compose.yml"
+  schedule:
+    # Weekly on Monday at 06:00 UTC — catches upstream image / dependency breakage
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # 1. Build the CLN image (built from source in compose/cln/Dockerfile)
+  # ──────────────────────────────────────────────────────────────────────────
+  build-cln:
+    name: Build CLN image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build CLN Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: compose/cln
+          push: false
+          tags: robosats/cln:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 2. Build the LNDg image (built from source in compose/lndg/Dockerfile)
+  # ──────────────────────────────────────────────────────────────────────────
+  build-lndg:
+    name: Build LNDg image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build LNDg Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: compose/lndg
+          push: false
+          tags: robosats/lndg:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 3. Validate docker-compose files (config render)
+  # ──────────────────────────────────────────────────────────────────────────
+  validate-compose:
+    name: Validate docker-compose configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install docker-compose v2
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq docker-compose-plugin
+
+      # Create minimal stub env files so `docker compose config` can resolve
+      # all required variables without real secrets.
+      - name: Create stub env for LND compose
+        run: |
+          cat > /tmp/lndtn.env <<'EOF'
+          SUFFIX=-ci
+          NETWORK=testnet
+          STATIC=/tmp/static
+          DATABASE=/tmp/db
+          PG_BACKUP=/tmp/pgbak
+          ROBOSATS_ENVS_FILE=/dev/null
+          THUB_ENVS_FILE=/dev/null
+          POSTGRES_NAME=postgres
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=ci
+          NGINX_CONFD=./nginx/tn.conf.d
+          WELLKNOWN=./nginx/tn.well-known
+          RELAY_CONF=./env-sample/lndtn/relay.strfry.conf
+          RELAY_URLS_EXTERNAL=./relay/tn.external_urls.txt
+          RELAY_URLS_FEDERATION=./relay/tn.federation_urls.txt
+          RELAY_DATA=/tmp/relay
+          WEB_LOCAL_PORT=8001
+          GUNICORN_WORKERS=2
+          BU_DIR1=/tmp/bu1
+          BU_DIR2=/tmp/bu2
+          BU_DIR3=/tmp/bu3
+          BITCOIN_DATA=/tmp/bitcoin
+          BITCOIN_CONF=./env-sample/lndtn/bitcoin.conf
+          LND_DATA=/tmp/lnd
+          LND_CONF=./env-sample/lndtn/lnd.conf
+          LIT_DATA=/tmp/lit
+          GUEST_BITCOIN=/home/bitcoin/.bitcoin
+          TOR_DATA=./env-sample/lndtn/tor
+          TOR_CONFIG=./env-sample/lndtn/torrc
+          GUEST_TOR_DATA=/var/lib/tor
+          GUEST_TOR_CONFIG=/etc/tor/torrc
+          GUEST_LND_RPC_PORT=10009
+          GUEST_LND_REST_PORT=8080
+          HOST_LND_RPC_PORT=10009
+          HOST_LND_REST_PORT=8080
+          THUB_LOCAL_PORT=3001
+          THUB_ACCOUNTS=./env-sample/lndtn/thunderhub-accounts.yml
+          THUB_ACCOUNTS_CONFIG_PATH=/config/accounts.yml
+          LNDG_CONFIG=./env-sample/lndtn/supervisord.conf
+          LNDG_DATA=/tmp/lndg
+          LNDG_PASSWORD=ci
+          LIT_LOCAL_PORT=4001
+          LIT_PASSWORD=ci
+          LND_BACKUP_PATH=/tmp/lnd-backup
+          NODE_ALIAS=ci
+          NODE_COLOR=#000000
+          LND_AUTOUNLOCK_PWD=./env-sample/lndtn/lnd_autounlock_pwd
+          BLOSSOM_CONFIG=./blossom/config.yml
+          BLOSSOM_DATA=/tmp/blossom
+          EOF
+
+      - name: Validate LND compose stack (config render)
+        working-directory: compose
+        run: |
+          docker compose \
+            --env-file /tmp/lndtn.env \
+            -f docker-compose.yml \
+            -f docker-compose.override-lnd.yml \
+            config --quiet
+
+      - name: Create stub env for CLN compose
+        run: |
+          cat > /tmp/clntn.env <<'EOF'
+          SUFFIX=-ci
+          NETWORK=testnet
+          STATIC=/tmp/static
+          DATABASE=/tmp/db
+          PG_BACKUP=/tmp/pgbak
+          ROBOSATS_ENVS_FILE=/dev/null
+          POSTGRES_NAME=postgres
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=ci
+          NGINX_CONFD=./nginx/tn.conf.d
+          WELLKNOWN=./nginx/tn.well-known
+          RELAY_CONF=./env-sample/clntn/torrc
+          RELAY_URLS_EXTERNAL=./relay/tn.external_urls.txt
+          RELAY_URLS_FEDERATION=./relay/tn.federation_urls.txt
+          RELAY_DATA=/tmp/relay
+          WEB_LOCAL_PORT=8002
+          GUNICORN_WORKERS=2
+          BU_DIR1=/tmp/bu1
+          BU_DIR2=/tmp/bu2
+          BU_DIR3=/tmp/bu3
+          BITCOIN_DATA=/tmp/bitcoin
+          BITCOIN_CONF=./env-sample/clntn/bitcoin.conf
+          CLN_DATA=/tmp/cln
+          CLN_CONFIG=./env-sample/clntn/cln_config
+          TOR_DATA=./env-sample/clntn/tor
+          TOR_CONFIG=./env-sample/clntn/torrc
+          GUEST_TOR_DATA=/var/lib/tor
+          GUEST_TOR_CONFIG=/etc/tor/torrc
+          BLOSSOM_CONFIG=./blossom/config.yml
+          BLOSSOM_DATA=/tmp/blossom
+          EOF
+
+      - name: Validate CLN compose stack (config render)
+        working-directory: compose
+        run: |
+          docker compose \
+            --env-file /tmp/clntn.env \
+            -f docker-compose.yml \
+            -f docker-compose.override-cln.yml \
+            config --quiet
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 4. Pull-check published images (verify tags still exist on Docker Hub)
+  # ──────────────────────────────────────────────────────────────────────────
+  check-published-images:
+    name: Check published image tags exist
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - lightninglabs/lnd:v0.21.2-beta
+          - lightninglabs/lightning-terminal:v0.17.2-alpha-docker
+          - elementsproject/lightningd:v26.06.6
+    steps:
+      - name: Pull ${{ matrix.image }} (manifest only)
+        run: docker pull --quiet ${{ matrix.image }}

@@ -60,4 +60,4 @@ data:
   TELEGRAM_BOT_NAME: ''
   TOR_PROXY: 'tor:9050'
   USE_TOR: 'True'
-  LND_VERSION: v0.15.0-beta
+  LND_VERSION: v0.21.2-beta

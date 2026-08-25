@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   lnd:
-    image: lightninglabs/lnd:${LND_TAG:-v0.17.4-beta@sha256:668eba1fdb1ac520292db95a57059be91895fb8af076eafd6c8b5e757f0f196c}
+    image: lightninglabs/lnd:${LND_TAG:-v0.21.2-beta@sha256:17e7e5adf823717a8e1ba7e02ac5d90eb58a029b5d30073914f64ab23e7cebf4}
     restart: always
     network_mode: service:tor
     container_name: lnd${SUFFIX}
@@ -34,7 +34,7 @@ services:
       - ${THUB_ACCOUNTS:?}:${THUB_ACCOUNTS_CONFIG_PATH:?}
 
   lit:
-    image: lightninglabs/lightning-terminal:${LIT_TAG:-v0.11.0-alpha@sha256:dc14c495f699b14c2d75c43097ad3ab40e7287fc136a3203df9cffe17b867b71}
+    image: lightninglabs/lightning-terminal:${LIT_TAG:-v0.17.2-alpha-docker@sha256:76f6ff1785cfeba76cacc3d4baa17beb57f2e0b8354c65e2c9a98cb940988e79}
     restart: always
     network_mode: service:tor
     container_name: lit${SUFFIX}

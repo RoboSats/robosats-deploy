@@ -20,6 +20,7 @@ RUN rustup toolchain install stable --component rustfmt --allow-downgrade
 WORKDIR /opt/lightningd
 RUN git clone --recursive --branch cln-grpc-hold https://github.com/daywalker90/lightning.git /tmp/cln-grpc-hold
 RUN cd /tmp/cln-grpc-hold \
+    && cargo update -p time --precise 0.3.55 \
     && cargo build --release
 
 FROM elementsproject/lightningd:v26.06.6 as final

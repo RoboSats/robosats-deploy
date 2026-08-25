@@ -156,6 +156,9 @@ jobs:
           BITCOIN_DATA=/tmp/bitcoin
           BITCOIN_CONF=./env-sample/clntn/bitcoin.conf
           GUEST_BITCOIN=/home/bitcoin/.bitcoin
+          LND_DATA=/tmp/lnd
+          LND_CONF=./env-sample/clntn/bitcoin.conf
+          LIT_DATA=/tmp/lit
           CLN_DATA=/tmp/cln
           CLN_CONFIG=./env-sample/clntn/cln_config
           TOR_DATA=./env-sample/clntn/tor

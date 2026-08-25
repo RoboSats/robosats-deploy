@@ -1,5 +1,11 @@
 # Blossom Server Configuration for RoboSats
+port: 3006
 
+# publicDomain controls the host blossom embeds in returned blob URLs.
+# Leave blank here so the server uses the Host header from the request (which
+# nginx sets via "proxy_set_header Host $host"). The BUD-11 'server' tag in
+# auth events is validated against the same value.
+# NOTE: bare hostname only, no scheme — "my.onion.xyz", NOT "http://my.onion.xyz".
 publicDomain: ""
 
 database:
@@ -7,7 +13,6 @@ database:
 
 dashboard:
   enabled: false
-  username: "admin"
 
 # Storage config
 storage:
@@ -16,12 +21,15 @@ storage:
   local:
     dir: "./data/blobs"
 
-  # keep encrypted images for 30 days
+  # Upload allow-list: blobs whose MIME type matches no rule are rejected 415
+  # before the body is read.
+  # RoboSats only ever uploads client-encrypted ciphertext, which lands as
+  # application/octet-stream. Restricting to that single type:
+  #   - prevents the server being used as anonymous hosting for arbitrary content
+  #   - ensures the prune loop cannot be tricked by MIME spoofing
   rules:
-    - type: "application/octet-stream" # no recognizable type
-      expiration: "30 days"
-    - type: "*"
-      expiration: "30 days"
+    - type: "application/octet-stream"
+      expiration: "14 days"
 
 # (BUD-02) upload
 upload:
@@ -30,13 +38,29 @@ upload:
   requirePubkeyInRule: false
   maxSize: 10485760 # 10 MB
 
+# (BUD-04) mirror — disabled: exposes PUT /mirror which issues server-side HTTP
+# requests. The upstream SSRF guard only blocks literal private IPs; DNS
+# rebinding and redirect-based bypasses are explicitly out of scope in the
+# source. Since blossom shares a network namespace with LND, bitcoind, postgres
+# and redis, keeping this endpoint off is strongly recommended.
+mirror:
+  enabled: false
+
 # No need for media optimization (BUD-05)
 media:
   enabled: false
   requireAuth: true
 
-# (BUD-04) list — disabled for privacy
+# (BUD-02) list — disabled for privacy
 list:
   enabled: false
   requireAuth: true
   allowListOthers: false
+
+# Landing page — disabled to reduce attack surface
+landing:
+  enabled: false
+
+# Blob reports (BUD-09) — disabled; coordinator has no moderation workflow
+report:
+  enabled: false

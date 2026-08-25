@@ -147,12 +147,21 @@ services:
     image: ghcr.io/hzrd149/blossom-server:master@sha256:a4c4b954af2d7504b105e19f845d0eb41d36651f706905a4c1ebf258c8983792
     container_name: blossom${SUFFIX}
     restart: always
-    environment:
-      PORT: 3006
+    # No environment overrides needed — all configuration is in config.yml.
     volumes:
       - ${BLOSSOM_CONFIG:?}:/app/config.yml:ro
       - ${BLOSSOM_DATA:?}:/app/data
     network_mode: service:tor
+    # Container hardening: blossom is the most exposed service (internet-facing
+    # file upload endpoint) and shares a network namespace with LND, bitcoind,
+    # postgres and redis. Drop capabilities and prevent privilege escalation.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    cpus: "0.5"
+    pids_limit: 100
 
   relay:
     build:

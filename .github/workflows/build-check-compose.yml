@@ -155,6 +155,7 @@ jobs:
           BU_DIR3=/tmp/bu3
           BITCOIN_DATA=/tmp/bitcoin
           BITCOIN_CONF=./env-sample/clntn/bitcoin.conf
+          GUEST_BITCOIN=/home/bitcoin/.bitcoin
           CLN_DATA=/tmp/cln
           CLN_CONFIG=./env-sample/clntn/cln_config
           TOR_DATA=./env-sample/clntn/tor

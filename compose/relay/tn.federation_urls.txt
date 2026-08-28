@@ -1,3 +1,2 @@
 ws://jpp3w5tpxtyg6lifonisdszpriiapszzem4wod2zsdweyfenlsxeoxid.onion/relay
 ws://ghbtv7lhoyhomyir4xvxaeyqgx4ylxksia343jaat3njqqlkqpdjqcyd.onion/relay
-ws://otmtestgbj3kqo3nre6oksusuqfb4ids5zg2y5z2qza2jogeu67stwid.onion/relay

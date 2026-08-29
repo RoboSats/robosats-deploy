@@ -4,3 +4,4 @@ ws://librebazovfmmkyi2jekraxsuso3mh622avuuzqpejixdl5dhuhb4tid.onion/relay
 ws://alice7bqexhtnkiqhtgkuwgtzzfkishw23ac4sfwpznrwlmnipxlomyd.onion/relay
 ws://ixiiqsuzt7hh5qxshiqwyewyh3gyygltbygqlvlyitg3gl3u2cemk3ad.onion/relay
 ws://2enoseg66hme76khjjn2qvrhipnzwgwa44mewgrdphrxbhzcxd2vdiqd.onion/relay
+ws://ammannjgzybw4qm2odmci7xgolh5grzijidacjxose5tthm375dcopad.onion/relay

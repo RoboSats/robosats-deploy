@@ -23,8 +23,8 @@ Applied at the Tor relay level so attackers pay bandwidth for each attempt.
 
 ```
 HiddenServiceEnableIntroDoSDefense      1
-HiddenServiceEnableIntroDoSRatePerSec   25   # sustained: 25 new clients/s
-HiddenServiceEnableIntroDoSBurstPerSec  200  # burst: up to 200 within 1 s
+HiddenServiceEnableIntroDoSRatePerSec   20   # sustained: 20 new clients/s
+HiddenServiceEnableIntroDoSBurstPerSec  60   # burst: up to 60 within 1 s
 ```
 
 Under light attack: tighten these values (e.g., rate=10, burst=50).
@@ -38,8 +38,8 @@ under load — so legitimate users are unaffected until the service is stressed.
 
 ```
 HiddenServicePoWDefensesEnabled 1
-HiddenServicePoWQueueRate   250  # rendezvous requests dispatched/s
-HiddenServicePoWQueueBurst  2500 # max burst from the priority queue
+HiddenServicePoWQueueRate   7    # rendezvous requests dispatched/s
+HiddenServicePoWQueueBurst  30   # max burst from the priority queue
 ```
 
 Lower `PoWQueueRate`/`PoWQueueBurst` → higher puzzle effort imposed on
@@ -59,7 +59,7 @@ PoW is not available.
 ### Layer 3 — Stream limits + Circuit-ID export (torrc → nginx)
 
 ```
-HiddenServiceMaxStreams           200   # max simultaneous streams per circuit
+HiddenServiceMaxStreams           32    # max simultaneous streams per circuit
 HiddenServiceMaxStreamsCloseCircuit 1   # tear down offending circuits
 HiddenServiceExportCircuitID haproxy   # prepend PROXY-protocol header on port 81
 ```
@@ -93,7 +93,11 @@ Defined in `compose/nginx/{tn,mn}.conf.d/local.conf`.
 
 | Zone | Key | Rate | Used for |
 |------|-----|------|----------|
-| `onion_req` | circuit pseudo-IP | 10 r/s (tn) / 20 r/s (mn) | `/ `, cached API endpoints |
+| `onion_req` | circuit pseudo-IP | 40 r/m | catch-all `/ ` (uncached endpoints) |
+| `onion_public` | circuit pseudo-IP | 20 r/s | cached read endpoints (`/api/info`, `/api/limits`, ...) |
+| `onion_make` | circuit pseudo-IP | 6 r/m | `/api/make/` |
+| `onion_reward` | circuit pseudo-IP | 30 r/m | `/api/reward/` |
+| `onion_robot` | circuit pseudo-IP | 2 r/m | `/api/robot/` |
 | `onion_ws` | circuit pseudo-IP | 5 r/s (tn) / 10 r/s (mn) | `/ws/`, `/relay`, `/nostr`, `/blossom/` |
 | `onion_coord` | circuit pseudo-IP | 2 r/s | `/coordinator` |
 | `onion_conn` | circuit pseudo-IP | (connection count) | all locations |
@@ -103,7 +107,8 @@ back off gracefully.  Abusive circuits are also killed by Layer 3.
 
 #### Response caching (hot read endpoints)
 
-`/api/info`, `/api/limits`, `/api/ticks`, `/api/book` are cached for **5 s**
+`/api/info`, `/api/limits`, `/api/ticks`, `/api/book`, `/api/price`,
+`/api/historical` are cached for **5 s**
 with `proxy_cache_lock on`.  Under a flood only one upstream request fires per
 cache miss; all other circuits get the cached response instantly.  This is the
 single most effective measure against book/info floods.
@@ -116,7 +121,6 @@ All vhosts set:
 - `send_timeout 30s`
 - `reset_timedout_connection on`
 - `proxy_read_timeout 3600s` (WebSocket connections)
-- `return 444` for requests with an empty `User-Agent` header
 
 ---
 
@@ -180,10 +184,10 @@ to raise puzzle effort faster and drain the queue more slowly.
 
 | Symptom | Action |
 |---------|--------|
-| `tor_hs_pow_suggested_effort` rising but queue not draining | Lower `HiddenServicePoWQueueRate` (e.g., 50) |
+| `tor_hs_pow_suggested_effort` rising but queue not draining | Lower `HiddenServicePoWQueueRate` (e.g., 5) |
 | Introduction flood overwhelming the service | Lower `HiddenServiceEnableIntroDoSRatePerSec` (e.g., 10) and `...BurstPerSec` (e.g., 50) |
 | Specific circuits hammering nginx (HTTP 429 in logs) | Tighten `onion_req` / `onion_ws` zone rates |
-| Specific circuits survive rate limits (slow POST flood) | Lower `HiddenServiceMaxStreams` (e.g., 50) |
+| Specific circuits survive rate limits (slow POST flood) | Lower `HiddenServiceMaxStreams` (e.g., 16) |
 | Attack is distributed across many circuits (botnet) | Increase `HiddenServicePoWQueueRate` difficulty or temporarily reduce `HiddenServicePoWQueueBurst` |
 
 ---

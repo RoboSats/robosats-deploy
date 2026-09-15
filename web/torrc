@@ -30,16 +30,16 @@ HiddenServicePort 80 127.0.0.1:81
 
 ## 1. Intro-point DoS defense (Proposal 305)
 HiddenServiceEnableIntroDoSDefense 1
-HiddenServiceEnableIntroDoSRatePerSec 25
-HiddenServiceEnableIntroDoSBurstPerSec 200
+HiddenServiceEnableIntroDoSRatePerSec 20
+HiddenServiceEnableIntroDoSBurstPerSec 60
 
 ## 2. Proof-of-Work rendezvous defense (requires tor >= 0.4.8.1 + --enable-gpl)
 HiddenServicePoWDefensesEnabled 1
-HiddenServicePoWQueueRate 250
-HiddenServicePoWQueueBurst 2500
+HiddenServicePoWQueueRate 7
+HiddenServicePoWQueueBurst 30
 
 ## 3. Stream (connection) limits per rendezvous circuit
-HiddenServiceMaxStreams 200
+HiddenServiceMaxStreams 32
 HiddenServiceMaxStreamsCloseCircuit 1
 
 ## 4. Circuit-ID export for nginx per-circuit rate limiting

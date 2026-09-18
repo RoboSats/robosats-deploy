@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim as builder
+FROM debian:bookworm-slim AS builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG LIGHTNINGD_VERSION=v26.06.6
@@ -23,7 +23,7 @@ RUN cd /tmp/cln-grpc-hold \
     && cargo update -p time --precise 0.3.55 \
     && cargo build --release
 
-FROM elementsproject/lightningd:v26.06.6 as final
+FROM elementsproject/lightningd:v26.06.6 AS final
 
 COPY --from=builder /tmp/cln-grpc-hold/target/release/cln-grpc-hold /tmp/cln-grpc-hold
 COPY entrypoint.sh entrypoint.sh

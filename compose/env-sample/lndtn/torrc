@@ -33,22 +33,22 @@ HiddenServicePort 80 127.0.0.1:81
 ##    reach your machine.  Defaults are 25 r/s rate, 200 burst — sensible
 ##    starting point; lower if under heavy attack.
 HiddenServiceEnableIntroDoSDefense 1
-HiddenServiceEnableIntroDoSRatePerSec 25
-HiddenServiceEnableIntroDoSBurstPerSec 200
+HiddenServiceEnableIntroDoSRatePerSec 20
+HiddenServiceEnableIntroDoSBurstPerSec 60
 
 ## 2. Proof-of-Work rendezvous defense (requires tor >= 0.4.8.1 + --enable-gpl)
 ##    Clients must solve a CPU puzzle before a rendezvous circuit is opened.
 ##    Effort is auto-tuned (0 when idle, climbs under attack).
 ##    Lower QueueRate/QueueBurst → higher puzzle effort for clients.
 HiddenServicePoWDefensesEnabled 1
-HiddenServicePoWQueueRate 250
-HiddenServicePoWQueueBurst 2500
+HiddenServicePoWQueueRate 7
+HiddenServicePoWQueueBurst 30
 
 ## 3. Stream (connection) limits per rendezvous circuit
 ##    Prevents one circuit from monopolising the service.
-##    200 simultaneous streams covers any legitimate browser session;
+##    32 simultaneous streams covers any legitimate browser session;
 ##    setting CloseCircuit=1 actively tears down abusive circuits.
-HiddenServiceMaxStreams 200
+HiddenServiceMaxStreams 32
 HiddenServiceMaxStreamsCloseCircuit 1
 
 ## 4. Circuit-ID export for nginx per-circuit rate limiting

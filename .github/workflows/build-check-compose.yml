@@ -190,7 +190,7 @@ jobs:
         image:
           - lightninglabs/lnd:v0.21.2-beta
           - lightninglabs/lightning-terminal:v0.17.2-alpha-docker
-          - elementsproject/lightningd:v26.06.6
+          - elementsproject/lightningd:v26.06.7
     steps:
       - name: Pull ${{ matrix.image }} (manifest only)
         run: docker pull --quiet ${{ matrix.image }}

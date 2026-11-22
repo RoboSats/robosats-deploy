@@ -1,24 +1,34 @@
-FROM ubuntu:jammy
+FROM ubuntu:noble AS build
 ENV TZ=Europe/London
 
 RUN apt update && apt install -y --no-install-recommends \
     git g++ make pkg-config libtool ca-certificates \
     libssl-dev zlib1g-dev liblmdb-dev libflatbuffers-dev \
-    libsecp256k1-dev libzstd-dev
+    libsecp256k1-dev libzstd-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # setup app
-RUN git clone --branch 1.0.4 --single-branch https://github.com/hoytech/strfry /app
+RUN git clone --branch 1.1.3 --single-branch https://github.com/hoytech/strfry /build
 
-WORKDIR /app
+WORKDIR /build
 
 RUN git submodule update --init
 RUN make setup-golpe
 RUN make clean
 RUN make -j4
 
-RUN apt update && apt install -y --no-install-recommends \
-    liblmdb0 libflatbuffers1 libsecp256k1-0 libb2-1 libzstd1 torsocks cron\
+FROM ubuntu:noble
+ENV TZ=Europe/London
+
+RUN DEBIAN_FRONTEND=noninteractive apt update \
+    && DEBIAN_FRONTEND=noninteractive apt upgrade -y \
+    && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    liblmdb0 libflatbuffers2 libsecp256k1-1 libssl3 libb2-1 libzstd1 torsocks cron \
     && rm -rf /var/lib/apt/lists/*
+
+# setup app (binary only, build toolchain stays in the build stage)
+COPY --from=build /build/strfry /app/strfry
+RUN mkdir -p /app/strfry-db
 
 RUN echo "TorAddress 127.0.0.1" >> /etc/tor/torsocks.conf
 RUN echo "TorPort 9050" >> /etc/tor/torsocks.conf

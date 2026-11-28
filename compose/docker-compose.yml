@@ -175,6 +175,20 @@ services:
       - ${RELAY_CONF}:/etc/strfry.conf:ro
       - ${RELAY_DATA}/db:/app/strfry-db:rw
     network_mode: service:tor
+    # Container hardening: the relay is internet-facing (serves the order book,
+    # NIP-17 notifications, order chat and federation sync) and runs as root.
+    # Drop capabilities (cron only needs SETUID/SETGID to execute the sync jobs)
+    # and prevent privilege escalation.
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: "2.0"
+    pids_limit: 200
 
 # Example simple backup service (copy/paste to attached storage locations)
   backup:
